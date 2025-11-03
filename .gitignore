@@ -1,16 +1,23 @@
-@"
+# === Unity ===
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
 [Bb]uild*/
 [Ll]ogs/
 UserSettings/
+[Bb]uildReport/
+MemoryCaptures/
 .vs/
 .idea/
 *.csproj
 *.sln
+*.user
+*.unitypackage
+
+# Mantener estas carpetas
 !Assets/
 !Packages/
 !ProjectSettings/
+
+# Evitar conflictos raros de Windows
 NUL
-"@ | Out-File -Encoding utf8 ".gitignore"
