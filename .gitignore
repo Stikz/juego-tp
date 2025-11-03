@@ -1,0 +1,16 @@
+@"
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild*/
+[Ll]ogs/
+UserSettings/
+.vs/
+.idea/
+*.csproj
+*.sln
+!Assets/
+!Packages/
+!ProjectSettings/
+NUL
+"@ | Out-File -Encoding utf8 ".gitignore"
