@@ -7,7 +7,6 @@ TagManager:
   - Keycard
   - Camera
   - Enemy
-  - Bullet
   layers:
   - Default
   - TransparentFX
