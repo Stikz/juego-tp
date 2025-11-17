@@ -1,7 +1,6 @@
 using UnityEngine;
 using Pathfinding;
 using System.Collections;
-//PRUEBA A VER SI PUSHEO
 public class EnemyPatrol : MonoBehaviour
 {
     [Header("Patrulla")]
@@ -90,20 +89,16 @@ public class EnemyPatrol : MonoBehaviour
             Patrol();
         }
 
-        HandleFootsteps();     // <<< — SONIDOS DE PASOS
+        HandleFootsteps();     // sonido pasos
         DetectPlayer();
     }
 
-    // -----------------------------------------------------
-    // 🔊 SISTEMA DE SONIDO DE PASOS (SIN ANIMATOR)
-    // -----------------------------------------------------
     private void HandleFootsteps()
     {
         if (footstepSource == null || footstepClip == null) return;
 
         float speed = aiPath.desiredVelocity.magnitude;
 
-        // Si no se mueve → no hay pasos
         if (speed < 0.1f || isInvestigating)
         {
             stepTimer = 0f;

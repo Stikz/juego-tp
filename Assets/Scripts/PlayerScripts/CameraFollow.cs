@@ -3,7 +3,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     [Header("Target")]
-    public Transform target; // Jugador
+    public Transform target; 
 
     [Header("Dead Zone")]
     public Vector2 deadZoneSize = new Vector2(2f, 2f);

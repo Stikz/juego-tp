@@ -1,16 +1,17 @@
-﻿using UnityEngine;
+﻿using Pathfinding;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CameraConeOscillatingWithPause : MonoBehaviour
 {
     [Header("Rotación")]
-    public float rotationSpeed = 30f;      // Velocidad en grados/seg
-    public float maxRotationAngle = 90f;   // Desviación máxima desde el ángulo inicial
-    public float waitTimeAtEdge = 1f;      // Tiempo que espera en los extremos
-    private float currentRotation = 0f;    // Ángulo relativo al inicial
+    public float rotationSpeed = 30f;      
+    public float maxRotationAngle = 90f;   
+    public float waitTimeAtEdge = 1f;      
+    private float currentRotation = 0f;    
     private bool rotatingRight = true;
     private bool isWaiting = false;
-    public float visualRotationOffset = 0f; // por ejemplo, -90 si el sprite mira hacia abajo
+    public float visualRotationOffset = 0f;
 
     [Header("Detección")]
     public float viewDistance = 5f;
@@ -20,6 +21,9 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
 
     [Header("Debug")]
     public bool showGizmos = true;
+
+    public GameOverManager gameOverManager;
+    private AIPath aiPath;
 
     private Transform player;
 
@@ -46,7 +50,7 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
         transform.Rotate(0f, 0f, delta);
         currentRotation += delta;
 
-        // Revisar si llegó a los extremos
+        // si llego a los extremos
         if (currentRotation > maxRotationAngle)
         {
             currentRotation = maxRotationAngle;
@@ -83,7 +87,9 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
             if (hit.collider != null && ((1 << hit.collider.gameObject.layer) & playerMask) != 0)
             {
                 Debug.Log("¡Jugador detectado! Perdiste");
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                gameOverManager.ShowGameOver();
+                aiPath.canMove = false;
+                this.enabled = false;
             }
         }
     }
@@ -94,7 +100,7 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
 
         Gizmos.color = Color.yellow;
 
-        // Aplica el mismo offset visual
+        // offset visual
         Vector3 forward = Quaternion.Euler(0, 0, visualRotationOffset) * transform.right * viewDistance;
         Vector3 leftRay = Quaternion.Euler(0, 0, viewAngle) * forward;
         Vector3 rightRay = Quaternion.Euler(0, 0, -viewAngle) * forward;

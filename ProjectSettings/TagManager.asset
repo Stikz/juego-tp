@@ -53,7 +53,7 @@ TagManager:
   - name: Player
     uniqueID: 4222302983
     locked: 0
-  - name: Obstacles
+  - name: 
     uniqueID: 3528498845
     locked: 0
   - name: Walls
