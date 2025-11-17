@@ -6,20 +6,16 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movimiento")]
     public float moveSpeed = 5f;
-
-    [Header("Referencias")]
     public Transform legs;
     public Transform body;
     public Transform firePoint;
     public Animator legsAnimator;
-
-    [Header("Referencias")]
     public Transform bodyPivot;
     public Transform legsPivot;
     public Transform bodyGraphics;
     public float legsAimOffsetDegrees = 0f;
 
-    [Header("Ajustes de Apunta")]
+    [Header("Ajustes de rotacion de las piernas")]
     public float bodyRotateLerp = 30f;
     public float legsRotateLerp = 20f;
     public float aimOffsetDegrees = 0f;

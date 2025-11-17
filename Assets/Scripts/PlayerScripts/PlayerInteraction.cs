@@ -11,11 +11,11 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            Interactuar();
+            interact();
         }
     }
 
-    void Interactuar()
+    void interact()
     {
         Vector3Int celdaActual = mesasTilemap.WorldToCell(transform.position);
 
@@ -25,7 +25,7 @@ public class PlayerInteraction : MonoBehaviour
         {
             mesasTilemap.SetTile(celdaActual, MesaVacia);
 
-            GameManager.Instance.RecogerDinero();
+            GameManager.Instance.collectMoney();
         }
     }
 }

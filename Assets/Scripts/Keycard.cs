@@ -2,6 +2,6 @@
 
 public class Keycard : MonoBehaviour
 {
-    // Solo marca este objeto como keycard.
-    // PlayerInventory se encarga de detectarla y recogerla.
+    // tick this objects as a keycard.
+    // PlayerInventory it is responsible for detecting and collecting it.
 }

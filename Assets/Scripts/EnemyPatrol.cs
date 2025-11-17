@@ -12,7 +12,6 @@ public class EnemyPatrol : MonoBehaviour
 
     [Header("Velocidades")]
     public float patrolSpeed = 2f;
-    public float investigateSpeed = 4f;
 
     [Header("Mirar alrededor")]
     public float lookAroundAngle = 90f;
@@ -71,25 +70,12 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (isDead) return;
 
-        // Ajustar velocidad según estado
-        aiPath.maxSpeed = isInvestigating ? investigateSpeed : patrolSpeed;
-
-        if (isInvestigating)
-        {
-            aiPath.destination = investigateTarget;
-
-            if (!aiPath.pathPending && Vector2.Distance(transform.position, investigateTarget) < 0.1f)
-            {
-                if (lookAroundCoroutine == null)
-                    lookAroundCoroutine = StartCoroutine(LookAroundCoroutine());
-            }
-        }
         else if (!isWaiting)
         {
             Patrol();
         }
 
-        HandleFootsteps();     // sonido pasos
+        HandleFootsteps();   
         DetectPlayer();
     }
 
@@ -107,7 +93,7 @@ public class EnemyPatrol : MonoBehaviour
 
         stepTimer += Time.deltaTime;
 
-        // Ajusta los pasos según la velocidad del enemigo
+        // Adjust the steps according to the enemy's speed.
         float adjustedInterval = stepInterval / (speed / patrolSpeed + 0.1f);
 
         if (stepTimer >= adjustedInterval)
@@ -137,52 +123,6 @@ public class EnemyPatrol : MonoBehaviour
         currentPoint = (currentPoint + 1) % patrolPoints.Length;
         aiPath.destination = patrolPoints[currentPoint].position;
         isWaiting = false;
-    }
-
-    private IEnumerator LookAroundCoroutine()
-    {
-        aiPath.canMove = false;
-        aiPath.rotationSpeed = 0f;
-
-        Quaternion originalRotation = transform.rotation;
-        float elapsed = 0f;
-        float[] angles = new float[] { 0f, 90f, 180f, 270f };
-
-        int index = 0;
-
-        while (elapsed < investigateDuration)
-        {
-            transform.rotation = originalRotation * Quaternion.Euler(0, 0, angles[index]);
-            index = (index + 1) % angles.Length;
-
-            float timer = 0f;
-            while (timer < snapInterval)
-            {
-                timer += Time.deltaTime;
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-        }
-
-        transform.rotation = originalRotation;
-        isInvestigating = false;
-        aiPath.canMove = true;
-        aiPath.destination = patrolPoints[currentPoint].position;
-        lookAroundCoroutine = null;
-    }
-
-    public void Investigate(Vector3 position)
-    {
-        investigateTarget = position;
-        isInvestigating = true;
-        isWaiting = false;
-        aiPath.canMove = true;
-
-        if (lookAroundCoroutine != null)
-        {
-            StopCoroutine(lookAroundCoroutine);
-            lookAroundCoroutine = null;
-        }
     }
 
     private void DetectPlayer()

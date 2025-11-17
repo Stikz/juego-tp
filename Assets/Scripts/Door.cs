@@ -12,7 +12,7 @@ public class Door : MonoBehaviour
     private Quaternion targetRotation;
     private Collider2D doorCollider;
 
-    private bool playerNear = false;      // Detecta si el jugador está cerca
+    private bool playerNear = false;  
     private GameObject player;
 
     private void Start()
@@ -26,10 +26,8 @@ public class Door : MonoBehaviour
 
     private void Update()
     {
-        // Rotación suave
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * openSpeed);
 
-        // Interacción
         if (playerNear && Input.GetKeyDown(KeyCode.E))
         {
             TryOpen(player);

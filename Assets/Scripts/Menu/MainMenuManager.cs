@@ -6,18 +6,18 @@ public class MainMenuManager : MonoBehaviour
 {
     public AudioSource menuAudio;
 
-    public void IniciarJuego()
+    public void initGame()
     {
         StartCoroutine(PlaySoundAndLoad("LevelSelector"));
     }
 
-    public void AbrirOpciones()
+    public void openOptions()
     {
         menuAudio.Play();
         Debug.Log("Abriendo opciones...");
     }
 
-    public void SalirDelJuego()
+    public void exitGame()
     {
         StartCoroutine(PlaySoundAndQuit());
     }

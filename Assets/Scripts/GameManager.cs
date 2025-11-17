@@ -11,21 +11,21 @@ public class GameManager : MonoBehaviour
 
     public VictoryManager victoryManager; 
 
-    private int totalDinero;
-    private int dineroRecogido;
+    private int totalMoney;
+    private int moneyCollected;
 
     void Awake()
     {
         if (Instance == null) { Instance = this; }
         else { Destroy(gameObject); }
 
-        ContarDineroInicial();
+        countInitialMoney();
     }
 
-    void ContarDineroInicial()
+    void countInitialMoney()
     {
-        totalDinero = 0;
-        dineroRecogido = 0;
+        totalMoney = 0;
+        moneyCollected = 0;
 
         if (victoryManager != null)
         {
@@ -36,24 +36,24 @@ public class GameManager : MonoBehaviour
         {
             if (mesasTilemap.GetTile(pos) == mesaConDinero_Tile)
             {
-                totalDinero++;
+                totalMoney++;
             }
         }
-        Debug.Log("Dinero total en el nivel: " + totalDinero);
+        Debug.Log("Dinero total en el nivel: " + totalMoney);
     }
 
-    public void RecogerDinero()
+    public void collectMoney()
     {
-        dineroRecogido++;
-        Debug.Log("Dinero recogido: " + dineroRecogido);
+        moneyCollected++;
+        Debug.Log("Dinero recogido: " + moneyCollected);
 
-        if (dineroRecogido >= totalDinero)
+        if (moneyCollected >= totalMoney)
         {
-            GanarJuego(); 
+            winGame(); 
         }
     }
 
-    void GanarJuego()
+    void winGame()
     {
         Debug.Log("¡GANASTE!");
 

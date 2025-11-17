@@ -10,10 +10,8 @@ public class PauseManager : MonoBehaviour
 
     private bool isPaused = false;
 
-    // 👉 Esta función se va a enlazar al Action "Pause" del PlayerInput (Invoke Unity Events)
     public void OnPause(InputAction.CallbackContext ctx)
     {
-        // Solo actuamos cuando la acción se "performea" (no en started/canceled)
         if (!ctx.performed) return;
 
         if (isPaused)

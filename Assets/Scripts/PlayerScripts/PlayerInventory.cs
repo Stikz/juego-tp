@@ -14,17 +14,15 @@ public class PlayerInventory : MonoBehaviour
     [Header("Keycard")]
     public float keycardPickupRadius = 1.2f;
 
-    // ESTA función es la que tiene que estar asignada al evento "Interact" del PlayerInput
+    // This function is the one that needs to be assigned to the "Interact" event of the PlayerInput
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed) return;
 
-        Debug.Log("OnInteract (PlayerInventory)");   // para confirmar que entra acá
+        Debug.Log("OnInteract (PlayerInventory)");  
 
-        // 1) Intentar agarrar keycard
         TryPickupKeycard();
 
-        // 2) Interactuar con la mesa / dinero / puerta
         Interactuar();
     }
 
@@ -59,7 +57,7 @@ public class PlayerInventory : MonoBehaviour
         if (tileEnCelda == mesaConDinero_Tile)
         {
             WinCondition.SetTile(celdaActual, mesaVacia_Tile);
-            GameManager.Instance.RecogerDinero();
+            GameManager.Instance.collectMoney();
         }
     }
 

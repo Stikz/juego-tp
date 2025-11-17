@@ -6,12 +6,12 @@ public class LevelSelector : MonoBehaviour
 {
     public AudioSource menuAudio;
 
-    public void CargarNivel(string nombreDeLaEscena)
+    public void uploadLevel (string nombreDeLaEscena)
     {
         StartCoroutine(PlaySoundAndLoad(nombreDeLaEscena));
     }
 
-    public void VolverAlMenu()
+    public void backToMenu()
     {
         StartCoroutine(PlaySoundAndLoad("Main Menu"));
     }
