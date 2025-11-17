@@ -20,10 +20,16 @@ public class PlayerShooting : MonoBehaviour
     [Header("HUD")]
     public TMP_Text ammoText;
 
+    // Referencia al controlador de sonido
+    private PlayerSoundController soundController;
+
     private void Start()
     {
         currentAmmo = maxAmmo;
         UpdateHUD();
+
+        // Buscar automáticamente el script de sonido en el Player
+        soundController = GetComponent<PlayerSoundController>();
     }
 
     private void UpdateHUD()
@@ -32,7 +38,7 @@ public class PlayerShooting : MonoBehaviour
             ammoText.text = currentAmmo + " / " + maxAmmo;
     }
 
-    // Input System: acción "Fire" (Button)
+    // Input System
     public void OnFire(InputAction.CallbackContext context)
     {
         if (context.started)
@@ -47,18 +53,23 @@ public class PlayerShooting : MonoBehaviour
         if (currentAmmo <= 0) return;
         if (bulletPrefab == null || firePoint == null) return;
 
+        // Crear bala
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
         // Ignorar colisión con jugador
-        Collider2D playerCol = GetComponentInParent<Collider2D>(); // si el shooting está en Body, sube al padre
+        Collider2D playerCol = GetComponentInParent<Collider2D>();
         Collider2D bulletCol = bullet.GetComponent<Collider2D>();
         if (playerCol != null && bulletCol != null)
             Physics2D.IgnoreCollision(bulletCol, playerCol);
 
-        // Velocidad a la bala (OJO: es 'velocity', no 'linearVelocity')
+        // Movimiento
         Rigidbody2D rbBullet = bullet.GetComponent<Rigidbody2D>();
         if (rbBullet != null)
             rbBullet.linearVelocity = firePoint.right * bulletSpeed;
+
+        // 🔊 Reproducir sonido
+        if (soundController != null)
+            soundController.PlayTaser();
 
         lastShootTime = Time.time;
         currentAmmo--;
