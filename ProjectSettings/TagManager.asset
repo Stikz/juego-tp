@@ -7,17 +7,16 @@ TagManager:
   - Keycard
   - Camera
   - Enemy
-  - Bullet
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Obstacle
+  - Walls
   - Water
   - UI
+  - Obstacles
   - Player
   - Enemy
-  - 
   - 
   - 
   - 
@@ -53,6 +52,9 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 4222302983
+    locked: 0
+  - name: Obstacles
+    uniqueID: 3528498845
     locked: 0
   - name: Walls
     uniqueID: 2914013661

@@ -1,7 +1,7 @@
 using UnityEngine;
 using Pathfinding;
 using System.Collections;
-
+//PRUEBA A VER SI PUSHEO
 public class EnemyPatrol : MonoBehaviour
 {
     [Header("Patrulla")]
@@ -17,7 +17,7 @@ public class EnemyPatrol : MonoBehaviour
 
     [Header("Mirar alrededor")]
     public float lookAroundAngle = 90f;
-    public float snapInterval = 0.5f;  // tiempo entre snaps
+    public float snapInterval = 0.5f;
 
     [Header("Detección")]
     public float viewDistance = 5f;
@@ -36,7 +36,15 @@ public class EnemyPatrol : MonoBehaviour
     private Vector3 investigateTarget;
     private Transform player;
     private bool isDead = false;
-    public Animator animator; 
+
+    [Header("Game Over")]
+    public GameOverManager gameOverManager;
+
+    [Header("Footstep sound")]
+    public AudioSource footstepSource;
+    public AudioClip footstepClip;
+    public float stepInterval = 0.4f;
+    private float stepTimer = 0f;
 
     private Coroutine lookAroundCoroutine;
     private float originalRotationSpeed;
@@ -71,7 +79,6 @@ public class EnemyPatrol : MonoBehaviour
         {
             aiPath.destination = investigateTarget;
 
-            // Llegó a investigar
             if (!aiPath.pathPending && Vector2.Distance(transform.position, investigateTarget) < 0.1f)
             {
                 if (lookAroundCoroutine == null)
@@ -82,21 +89,43 @@ public class EnemyPatrol : MonoBehaviour
         {
             Patrol();
         }
-        UpdateAnimation();
+
+        HandleFootsteps();     // <<< — SONIDOS DE PASOS
         DetectPlayer();
     }
-    private void UpdateAnimation()
+
+    // -----------------------------------------------------
+    // 🔊 SISTEMA DE SONIDO DE PASOS (SIN ANIMATOR)
+    // -----------------------------------------------------
+    private void HandleFootsteps()
     {
-        if (animator == null || aiPath == null) return;
+        if (footstepSource == null || footstepClip == null) return;
 
         float speed = aiPath.desiredVelocity.magnitude;
 
-        animator.SetFloat("Speed", speed);
+        // Si no se mueve → no hay pasos
+        if (speed < 0.1f || isInvestigating)
+        {
+            stepTimer = 0f;
+            return;
+        }
+
+        stepTimer += Time.deltaTime;
+
+        // Ajusta los pasos según la velocidad del enemigo
+        float adjustedInterval = stepInterval / (speed / patrolSpeed + 0.1f);
+
+        if (stepTimer >= adjustedInterval)
+        {
+            footstepSource.PlayOneShot(footstepClip);
+            stepTimer = 0f;
+        }
     }
 
     private void Patrol()
     {
-        aiPath.rotationSpeed = originalRotationSpeed; // restaurar giro automático en patrulla
+        aiPath.rotationSpeed = originalRotationSpeed;
+
         if (aiPath.destination != patrolPoints[currentPoint].position)
             aiPath.destination = patrolPoints[currentPoint].position;
 
@@ -118,12 +147,11 @@ public class EnemyPatrol : MonoBehaviour
     private IEnumerator LookAroundCoroutine()
     {
         aiPath.canMove = false;
-        aiPath.rotationSpeed = 0f; // desactivar giro automático
+        aiPath.rotationSpeed = 0f;
 
         Quaternion originalRotation = transform.rotation;
         float elapsed = 0f;
-        float snapInterval = 0.5f; // tiempo entre snaps
-        float[] angles = new float[] { 0f, 90f, 180f, 270f }; // <-- array de floats
+        float[] angles = new float[] { 0f, 90f, 180f, 270f };
 
         int index = 0;
 
@@ -148,8 +176,6 @@ public class EnemyPatrol : MonoBehaviour
         lookAroundCoroutine = null;
     }
 
-
-
     public void Investigate(Vector3 position)
     {
         investigateTarget = position;
@@ -157,7 +183,6 @@ public class EnemyPatrol : MonoBehaviour
         isWaiting = false;
         aiPath.canMove = true;
 
-        // Detener coroutine anterior si existía
         if (lookAroundCoroutine != null)
         {
             StopCoroutine(lookAroundCoroutine);
@@ -176,9 +201,12 @@ public class EnemyPatrol : MonoBehaviour
         if (dist < viewDistance && angle < viewAngle)
         {
             RaycastHit2D hit = Physics2D.Raycast(raycastOrigin.position, dir, viewDistance, playerMask | obstacleMask);
+
             if (hit.collider != null && ((1 << hit.collider.gameObject.layer) & playerMask) != 0)
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+                gameOverManager.ShowGameOver();
+                aiPath.canMove = false;
+                this.enabled = false;
             }
         }
     }

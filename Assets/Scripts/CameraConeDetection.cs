@@ -1,18 +1,18 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CameraConeOscillatingWithPause : MonoBehaviour
 {
-    [Header("Rotación")]
+    [Header("RotaciÃ³n")]
     public float rotationSpeed = 30f;      // Velocidad en grados/seg
-    public float maxRotationAngle = 90f;   // Desviación máxima desde el ángulo inicial
+    public float maxRotationAngle = 90f;   // DesviaciÃ³n mÃ¡xima desde el Ã¡ngulo inicial
     public float waitTimeAtEdge = 1f;      // Tiempo que espera en los extremos
-    private float currentRotation = 0f;    // Ángulo relativo al inicial
+    private float currentRotation = 0f;    // Ãngulo relativo al inicial
     private bool rotatingRight = true;
     private bool isWaiting = false;
     public float visualRotationOffset = 0f; // por ejemplo, -90 si el sprite mira hacia abajo
 
-    [Header("Detección")]
+    [Header("DetecciÃ³n")]
     public float viewDistance = 5f;
     public float viewAngle = 45f;
     public LayerMask obstacleMask;
@@ -27,7 +27,7 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         if (player == null)
-            Debug.LogWarning("No se encontró un GameObject con tag Player.");
+            Debug.LogWarning("No se encontrÃ³ un GameObject con tag Player.");
     }
 
     private void Update()
@@ -46,7 +46,7 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
         transform.Rotate(0f, 0f, delta);
         currentRotation += delta;
 
-        // Revisar si llegó a los extremos
+        // Revisar si llegÃ³ a los extremos
         if (currentRotation > maxRotationAngle)
         {
             currentRotation = maxRotationAngle;
@@ -82,7 +82,7 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, viewDistance, obstacleMask | playerMask);
             if (hit.collider != null && ((1 << hit.collider.gameObject.layer) & playerMask) != 0)
             {
-                Debug.Log("¡Jugador detectado! Perdiste");
+                Debug.Log("Â¡Jugador detectado! Perdiste");
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
         }
