@@ -34,7 +34,7 @@ public class PauseManager : MonoBehaviour
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu"); // poné el nombre real
+        SceneManager.LoadScene("Main Menu"); // poné el nombre real
     }
 
     public void Options()

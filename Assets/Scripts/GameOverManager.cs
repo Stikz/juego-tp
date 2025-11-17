@@ -20,6 +20,6 @@ public class GameOverManager : MonoBehaviour
     public void MainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu"); // Cambiá por tu escena real
+        SceneManager.LoadScene("Main Menu"); // Cambiá por tu escena real
     }
 }
