@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 40e1c69cc781c424b887a4f9b194a5bc
+guid: 03204e80a2efc3e43a60543fe337fcad
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3006688283138741721
-    second: nuevo menu a2_0
+      213: -4816141307822459151
+    second: nuevo menu a6_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: nuevo menu a2_0
+      name: nuevo menu a6_0
       rect:
         serializedVersion: 2
-        x: 125
-        y: 285
-        width: 66
-        height: 19
-      alignment: 9
-      pivot: {x: 0.4931146, y: 0.4521629}
+        x: 139
+        y: 250
+        width: 38
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9d550da3017e9b920800000000000000
-      internalID: 3006688283138741721
+      spriteID: 1f6382f5ff0a92db0800000000000000
+      internalID: -4816141307822459151
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 6a810bea97e48734f99bf40bd1f43b05
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      nuevo menu a2_0: 3006688283138741721
+      nuevo menu a6_0: -4816141307822459151
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
