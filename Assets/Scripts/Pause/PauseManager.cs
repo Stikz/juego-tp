@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class PauseManager : MonoBehaviour
         isPaused = true;
         pauseCanvas.SetActive(true);
         Time.timeScale = 0f;
+
+        PlayerInput.all[0].DeactivateInput();   // Block player input
     }
 
     public void Resume()
@@ -37,7 +40,10 @@ public class PauseManager : MonoBehaviour
         pauseCanvas.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
+
+        PlayerInput.all[0].ActivateInput();     // Activate player input
     }
+
 
     public void GoToMainMenu()
     {

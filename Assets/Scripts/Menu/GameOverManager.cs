@@ -1,17 +1,22 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 public class GameOverManager : MonoBehaviour
 {
     public GameObject gameOverCanvas;
-
     public AudioSource menuAudio;
 
     public void ShowGameOver()
     {
         gameOverCanvas.SetActive(true);
-        Time.timeScale = 0f; 
+
+        // Bloquear input del jugador
+        if (PlayerInput.all.Count > 0)
+            PlayerInput.all[0].DeactivateInput();
+
+        Time.timeScale = 0f;
     }
 
     public void Retry()
@@ -21,16 +26,20 @@ public class GameOverManager : MonoBehaviour
 
     public void MainMenu()
     {
-        StartCoroutine(PlaySoundAndLoadScene("Main Menu")); 
+        StartCoroutine(PlaySoundAndLoadScene("Main Menu"));
     }
 
     IEnumerator PlaySoundAndReload()
     {
         Time.timeScale = 1f;
 
-        menuAudio.PlayOneShot(menuAudio.clip);
+        if (menuAudio != null && menuAudio.clip != null)
+            menuAudio.PlayOneShot(menuAudio.clip);
 
         yield return new WaitForSecondsRealtime(menuAudio.clip.length);
+
+        if (PlayerInput.all.Count > 0)
+            PlayerInput.all[0].ActivateInput();
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
@@ -39,9 +48,13 @@ public class GameOverManager : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        menuAudio.PlayOneShot(menuAudio.clip);
+        if (menuAudio != null && menuAudio.clip != null)
+            menuAudio.PlayOneShot(menuAudio.clip);
 
         yield return new WaitForSecondsRealtime(menuAudio.clip.length);
+
+        if (PlayerInput.all.Count > 0)
+            PlayerInput.all[0].ActivateInput();
 
         SceneManager.LoadScene(sceneName);
     }
