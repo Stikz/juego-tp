@@ -31,7 +31,7 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         if (player == null)
-            Debug.LogWarning("No se encontró un GameObject con tag Player.");
+            Debug.LogWarning("No se encontró un GameObject con tag Playerr.");
     }
 
     private void Update()
