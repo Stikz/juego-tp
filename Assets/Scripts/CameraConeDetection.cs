@@ -1,4 +1,4 @@
-﻿using Pathfinding;
+﻿
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,7 +23,6 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
     public bool showGizmos = true;
 
     public GameOverManager gameOverManager;
-    private AIPath aiPath;
 
     private Transform player;
 
@@ -88,7 +87,6 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
             {
                 Debug.Log("¡Jugador detectado! Perdiste");
                 gameOverManager.ShowGameOver();
-                aiPath.canMove = false;
                 this.enabled = false;
             }
         }

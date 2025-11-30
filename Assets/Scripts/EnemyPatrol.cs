@@ -1,6 +1,8 @@
 using UnityEngine;
 using Pathfinding;
 using System.Collections;
+using UnityEngine.Rendering.Universal;
+
 public class EnemyPatrol : MonoBehaviour
 {
     [Header("Patrulla")]
@@ -44,6 +46,10 @@ public class EnemyPatrol : MonoBehaviour
     public float stepInterval = 0.4f;
     private float stepTimer = 0f;
 
+    public Animator anim;
+    public string deathTriggerName = "Die";
+    public Light2D enemyLight;
+
     private Coroutine lookAroundCoroutine;
     private float originalRotationSpeed;
 
@@ -70,12 +76,15 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (isDead) return;
 
-        else if (!isWaiting)
+        float currentSpeed = aiPath.desiredVelocity.magnitude;
+        anim.SetFloat("Speed", currentSpeed);
+
+        if (!isWaiting)
         {
             Patrol();
         }
 
-        HandleFootsteps();   
+        HandleFootsteps();
         DetectPlayer();
     }
 
@@ -173,8 +182,14 @@ public class EnemyPatrol : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Static;
         }
 
-        Destroy(gameObject, 0.2f);
+        if (anim != null)
+        {
+            anim.SetTrigger(deathTriggerName);
+        }
+        if (enemyLight != null)
+            enemyLight.enabled = false;
     }
+
 
     private void OnDrawGizmos()
     {
