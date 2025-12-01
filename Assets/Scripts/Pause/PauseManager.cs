@@ -55,7 +55,7 @@ public class PauseManager : MonoBehaviour
         {
             menuAudio.PlayOneShot(menuAudio.clip);
         }
-        Debug.Log("Abrir Opciones (te hago menú si querés)");
+        Debug.Log("Menu de opciones");
     }
 
     IEnumerator PlaySoundAndLoad(string sceneName)
