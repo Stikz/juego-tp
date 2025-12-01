@@ -103,10 +103,10 @@ TextureImporter:
       name: nuevo_menu_a3_0
       rect:
         serializedVersion: 2
-        x: 91
-        y: 265
-        width: 100
-        height: 59
+        x: 126
+        y: 266
+        width: 64
+        height: 17
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f47210e4c1d1c6c40bd150348fdfed12
     internalID: 0
     vertices: []
     indices: 

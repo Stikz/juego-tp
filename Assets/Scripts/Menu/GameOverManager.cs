@@ -12,7 +12,7 @@ public class GameOverManager : MonoBehaviour
     {
         gameOverCanvas.SetActive(true);
 
-        // Bloquear input del jugador
+        // Bloquea input del jugador
         if (PlayerInput.all.Count > 0)
             PlayerInput.all[0].DeactivateInput();
 

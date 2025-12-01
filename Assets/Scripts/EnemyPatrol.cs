@@ -102,7 +102,6 @@ public class EnemyPatrol : MonoBehaviour
 
         stepTimer += Time.deltaTime;
 
-        // Adjust the steps according to the enemy's speed.
         float adjustedInterval = stepInterval / (speed / patrolSpeed + 0.1f);
 
         if (stepTimer >= adjustedInterval)

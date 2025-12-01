@@ -36,7 +36,6 @@ public class PlayerShooting : MonoBehaviour
             ammoText.text = currentAmmo + " / " + maxAmmo;
     }
 
-    // Input System
     public void OnFire(InputAction.CallbackContext context)
     {
         if (context.started)
@@ -51,7 +50,6 @@ public class PlayerShooting : MonoBehaviour
         if (currentAmmo <= 0) return;
         if (bulletPrefab == null || firePoint == null) return;
 
-        // Create bullet
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
         // Ignore colission with player

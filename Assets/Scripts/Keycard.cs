@@ -1,7 +1,16 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class Keycard : MonoBehaviour
 {
-    // tick this objects as a keycard.
-    // PlayerInventory it is responsible for detecting and collecting it.
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
 }

@@ -31,7 +31,6 @@ public class PlayerMovement : MonoBehaviour
         mainCam = Camera.main;
     }
 
-    // Vinculado a la acción "Move" (Invoke Unity Events)
     public void OnMove(InputAction.CallbackContext ctx)
     {
         moveInput = ctx.ReadValue<Vector2>();
