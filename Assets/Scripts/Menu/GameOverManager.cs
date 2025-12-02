@@ -1,20 +1,16 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
 using UnityEngine.InputSystem;
 
 public class GameOverManager : MonoBehaviour
 {
     public GameObject gameOverCanvas;
-    public AudioSource menuAudio;
+    public AudioSource menuAudio; 
 
     public void ShowGameOver()
     {
         gameOverCanvas.SetActive(true);
 
-        // Block player input
-        int playerInputCount = PlayerInput.all.Count;
-        if (playerInputCount > 0)
+        if (PlayerInput.all.Count > 0)
             PlayerInput.all[0].DeactivateInput();
 
         Time.timeScale = 0f;
@@ -22,41 +18,11 @@ public class GameOverManager : MonoBehaviour
 
     public void Retry()
     {
-        StartCoroutine(PlaySoundAndReload());
+        ManageScenes.Instance.ReloadScene();
     }
 
     public void MainMenu()
     {
-        StartCoroutine(PlaySoundAndLoadScene("Main Menu"));
-    }
-
-    IEnumerator PlaySoundAndReload()
-    {
-        Time.timeScale = 1f;
-
-        if (menuAudio != null && menuAudio.clip != null)
-            menuAudio.PlayOneShot(menuAudio.clip);
-
-        yield return new WaitForSecondsRealtime(menuAudio.clip.length);
-
-        if (PlayerInput.all.Count > 0)
-            PlayerInput.all[0].ActivateInput();
-
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    IEnumerator PlaySoundAndLoadScene(string sceneName)
-    {
-        Time.timeScale = 1f;
-
-        if (menuAudio != null && menuAudio.clip != null)
-            menuAudio.PlayOneShot(menuAudio.clip);
-
-        yield return new WaitForSecondsRealtime(menuAudio.clip.length);
-
-        if (PlayerInput.all.Count > 0)
-            PlayerInput.all[0].ActivateInput();
-
-        SceneManager.LoadScene(sceneName);
+        ManageScenes.Instance.LoadScene("Main Menu");
     }
 }

@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: ef03dc539c8befe489197f6c21cc93d2
+guid: 00fdccc494a5dbd4d867459125b79914
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1784639319915003412
-    second: nuevo menu a5_0
+      213: -2453806576958482103
+    second: player-Sheet_n 3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
-    sRGBTexture: 1
+    enableMipMap: 1
+    sRGBTexture: 0
     linearTexture: 0
     fadeOut: 0
     borderMipMap: 0
@@ -55,9 +55,9 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   spriteTessellationDetail: -1
-  textureType: 8
+  textureType: 1
   textureShape: 1
   singleChannelComponent: 0
   flipbookRows: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: nuevo menu a5_0
+      name: player-Sheet_n 3_0
       rect:
         serializedVersion: 2
-        x: 137
-        y: 249
-        width: 42
-        height: 18
+        x: 3
+        y: 0
+        width: 26
+        height: 25
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ce185447effab37e0800000000000000
-      internalID: -1784639319915003412
+      spriteID: 9495fd84be352fdd0800000000000000
+      internalID: -2453806576958482103
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: a2a2ff38004dd004eb355846a7399b41
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      nuevo menu a5_0: -1784639319915003412
+      player-Sheet_n 3_0: -2453806576958482103
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

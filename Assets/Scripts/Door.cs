@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class Door : MonoBehaviour
 {
@@ -14,11 +15,17 @@ public class Door : MonoBehaviour
 
     private GameObject player;
 
+    public Light2D[] doorLights;  
+    public Color closedColor = Color.red;
+    public Color openColor = Color.green;
+
     private void Start()
     {
         closedRotation = transform.rotation;
         targetRotation = closedRotation;
         doorCollider = GetComponent<Collider2D>();
+
+        UpdateLightsColor();
     }
 
     private void Update()
@@ -45,6 +52,21 @@ public class Door : MonoBehaviour
 
         if (doorCollider != null)
             doorCollider.enabled = !isOpen;
+
+        UpdateLightsColor();
+    }
+
+    private void UpdateLightsColor()
+    {
+        if (doorLights == null) return;
+
+        Color targetColor = isOpen ? openColor : closedColor;
+
+        foreach (var light in doorLights)
+        {
+            if (light == null) continue;
+            light.color = targetColor;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)

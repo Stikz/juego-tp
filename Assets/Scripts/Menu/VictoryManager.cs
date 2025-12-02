@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
 using UnityEngine.InputSystem;
 
 public class VictoryManager : MonoBehaviour
@@ -18,34 +16,19 @@ public class VictoryManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-
     public void GoToLevelSelector()
     {
-        StartCoroutine(PlaySoundAndLoad("LevelSelector"));
-        if (PlayerInput.all.Count > 0)
-            PlayerInput.all[0].ActivateInput();
+        ManageScenes.Instance.LoadScene("LevelSelector");
     }
 
     public void GoToMainMenu()
     {
-        StartCoroutine(PlaySoundAndLoad("Main Menu"));
-        if (PlayerInput.all.Count > 0)
-            PlayerInput.all[0].ActivateInput();
-
+        ManageScenes.Instance.LoadScene("Main Menu");
     }
 
     public void OpenOptions()
     {
-        menuAudio.PlayOneShot(menuAudio.clip);
-        if (PlayerInput.all.Count > 0)
-            PlayerInput.all[0].ActivateInput();
-    }
-
-    IEnumerator PlaySoundAndLoad(string sceneName)
-    {
-        Time.timeScale = 1f;
-        menuAudio.PlayOneShot(menuAudio.clip);
-        yield return new WaitForSecondsRealtime(menuAudio.clip.length);
-        SceneManager.LoadScene(sceneName);
+        if (menuAudio != null && menuAudio.clip != null)
+            menuAudio.PlayOneShot(menuAudio.clip);
     }
 }

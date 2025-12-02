@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections; 
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -8,32 +6,17 @@ public class MainMenuManager : MonoBehaviour
 
     public void initGame()
     {
-        StartCoroutine(PlaySoundAndLoad("LevelSelector"));
+        ManageScenes.Instance.LoadScene("LevelSelector");
     }
 
     public void openOptions()
     {
-        menuAudio.Play();
+        if (menuAudio != null && menuAudio.clip != null)
+            menuAudio.Play();
     }
 
     public void exitGame()
     {
-        StartCoroutine(PlaySoundAndQuit());
-    }
-
-    IEnumerator PlaySoundAndLoad(string sceneName)
-    {
-        menuAudio.Play();
-
-        yield return new WaitForSeconds(menuAudio.clip.length);
-
-        SceneManager.LoadScene(sceneName);
-    }
-
-    IEnumerator PlaySoundAndQuit()
-    {
-        menuAudio.Play();
-        yield return new WaitForSeconds(menuAudio.clip.length);
-        Application.Quit();
+        ManageScenes.Instance.QuitGame();
     }
 }

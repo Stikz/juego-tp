@@ -36,6 +36,7 @@ public class ManageScenes : MonoBehaviour
     {
         StartCoroutine(QuitRoutine());
     }
+
     IEnumerator LoadSceneRoutine(string sceneName)
     {
         Time.timeScale = 1f;

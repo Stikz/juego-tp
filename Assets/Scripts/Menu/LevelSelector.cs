@@ -1,27 +1,14 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections; 
 
 public class LevelSelector : MonoBehaviour
 {
-    public AudioSource menuAudio;
-
-    public void uploadLevel (string sceneName)
+    public void uploadLevel(string sceneName)
     {
-        StartCoroutine(PlaySoundAndLoad(sceneName));
+        ManageScenes.Instance.LoadScene(sceneName);
     }
 
     public void backToMenu()
     {
-        StartCoroutine(PlaySoundAndLoad("Main Menu"));
-    }
-
-    IEnumerator PlaySoundAndLoad(string sceneName)
-    {
-        menuAudio.Play();
-
-        yield return new WaitForSeconds(menuAudio.clip.length);
-
-        SceneManager.LoadScene(sceneName);
+        ManageScenes.Instance.LoadScene("Main Menu");
     }
 }
