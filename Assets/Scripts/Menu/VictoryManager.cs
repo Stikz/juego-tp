@@ -37,7 +37,6 @@ public class VictoryManager : MonoBehaviour
     public void OpenOptions()
     {
         menuAudio.PlayOneShot(menuAudio.clip);
-        Debug.Log("Abriendo Opciones...");
         if (PlayerInput.all.Count > 0)
             PlayerInput.all[0].ActivateInput();
     }

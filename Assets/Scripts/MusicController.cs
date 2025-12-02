@@ -7,11 +7,14 @@ public class MusicController : MonoBehaviour
 
     private void Start()
     {
-        if (audioSource != null && musicClip != null)
-        {
-            audioSource.clip = musicClip;
-            audioSource.loop = true;
-            audioSource.Play();
-        }
+        if (audioSource == null || musicClip == null) return;
+
+        audioSource.outputAudioMixerGroup =
+            Resources.Load<UnityEngine.Audio.AudioMixer>("Mixer")
+            .FindMatchingGroups("Music")[0];
+
+        audioSource.loop = true;
+        audioSource.clip = musicClip;
+        audioSource.Play();
     }
 }

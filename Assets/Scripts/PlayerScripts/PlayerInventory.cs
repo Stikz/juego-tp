@@ -6,11 +6,11 @@ public class PlayerInventory : MonoBehaviour
 {
     private bool hasKeycard = false;
 
-    [Header("Win Condition / Interacción con tiles")]
+    [Header("Win Condition")]
     public Tilemap WinCondition;
-    public TileBase mesaConDinero_Tile;
-    public TileBase mesaVacia_Tile;
-
+    public TileBase tableWithMoney;
+    public TileBase tableEmpty;
+    private Door doorNear;
     [Header("Keycard")]
     public float keycardPickupRadius = 1.2f;
 
@@ -18,28 +18,21 @@ public class PlayerInventory : MonoBehaviour
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed) return;
-
-        Debug.Log("OnInteract (PlayerInventory)");  
-
         TryPickupKeycard();
-
+        DetectNearbyDoor();
+        TryOpenDoor();
         Interactuar();
+
     }
 
     void TryPickupKeycard()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, keycardPickupRadius);
-        Debug.Log($"TryPickupKeycard: {hits.Length} colliders alrededor del jugador.");
-
         foreach (var hit in hits)
         {
-            Debug.Log($"  - Collider: {hit.name}");
-
             Keycard keycard = hit.GetComponentInParent<Keycard>();
             if (keycard != null)
             {
-                Debug.Log($"Keycard encontrada en: {keycard.gameObject.name}");
-
                 CollectKeycard();
                 Destroy(keycard.gameObject);
                 break;
@@ -51,20 +44,48 @@ public class PlayerInventory : MonoBehaviour
     {
         if (WinCondition == null) return;
 
-        Vector3Int celdaActual = WinCondition.WorldToCell(transform.position);
-        TileBase tileEnCelda = WinCondition.GetTile(celdaActual);
+        Vector3Int currentCell = WinCondition.WorldToCell(transform.position);
+        TileBase cellTile = WinCondition.GetTile(currentCell);
 
-        if (tileEnCelda == mesaConDinero_Tile)
+        if (cellTile == tableWithMoney)
         {
-            WinCondition.SetTile(celdaActual, mesaVacia_Tile);
+            WinCondition.SetTile(currentCell, tableEmpty);
             GameManager.Instance.collectMoney();
         }
     }
 
+    private void Update()
+    {
+        DetectNearbyDoor();
+    }
+
+    void DetectNearbyDoor()
+    {
+        doorNear = null;
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 1.2f);
+
+        foreach (var hit in hits)
+        {
+            Door door = hit.GetComponentInParent<Door>();
+            if (door != null)
+            {
+                doorNear = door;
+                break;
+            }
+        }
+    }
+    void TryOpenDoor()
+    {
+        if (doorNear != null)
+        {
+            doorNear.TryOpen(gameObject);
+        }
+    }
+
+
     public void CollectKeycard()
     {
         hasKeycard = true;
-        Debug.Log("¡Keycard recogida!");
     }
 
     public bool HasKeycard()

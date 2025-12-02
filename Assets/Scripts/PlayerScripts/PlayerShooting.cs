@@ -4,16 +4,16 @@ using TMPro;
 
 public class PlayerShooting : MonoBehaviour
 {
-    [Header("Balas")]
+    [Header("Bullets")]
     public GameObject bulletPrefab;
     public Transform firePoint;
     public float bulletSpeed = 15f;
 
-    [Header("Munición")]
+    [Header("Ammo")]
     public int maxAmmo = 10;
     private int currentAmmo;
 
-    [Header("Disparo")]
+    [Header("Shooting")]
     public float cooldown = 0.5f;
     private float lastShootTime;
 
@@ -52,7 +52,6 @@ public class PlayerShooting : MonoBehaviour
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
-        // Ignore colission with player
         Collider2D playerCol = GetComponentInParent<Collider2D>();
         Collider2D bulletCol = bullet.GetComponent<Collider2D>();
         if (playerCol != null && bulletCol != null)

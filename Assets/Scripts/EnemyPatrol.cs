@@ -5,21 +5,12 @@ using UnityEngine.Rendering.Universal;
 
 public class EnemyPatrol : MonoBehaviour
 {
-    [Header("Patrulla")]
+    [Header("Patrol")]
     public Transform[] patrolPoints;
     public float waitTimeAtPoint = 2f;
-
-    [Header("Investigación")]
-    public float investigateDuration = 3f;
-
-    [Header("Velocidades")]
     public float patrolSpeed = 2f;
 
-    [Header("Mirar alrededor")]
-    public float lookAroundAngle = 90f;
-    public float snapInterval = 0.5f;
-
-    [Header("Detección")]
+    [Header("Detection")]
     public float viewDistance = 5f;
     public float viewAngle = 45f;
     public LayerMask playerMask;
@@ -33,7 +24,6 @@ public class EnemyPatrol : MonoBehaviour
     private int currentPoint = 0;
     private bool isWaiting = false;
     private bool isInvestigating = false;
-    private Vector3 investigateTarget;
     private Transform player;
     private bool isDead = false;
 
@@ -57,8 +47,6 @@ public class EnemyPatrol : MonoBehaviour
     {
         aiPath = GetComponent<AIPath>();
         seeker = GetComponent<Seeker>();
-        if (aiPath == null) Debug.LogError("Falta AIPath en el enemigo");
-        if (seeker == null) Debug.LogError("Falta Seeker en el enemigo");
     }
 
     private void Start()
@@ -106,7 +94,9 @@ public class EnemyPatrol : MonoBehaviour
 
         if (stepTimer >= adjustedInterval)
         {
+            footstepSource.pitch = Random.Range(0.9f, 1.1f);
             footstepSource.PlayOneShot(footstepClip);
+
             stepTimer = 0f;
         }
     }

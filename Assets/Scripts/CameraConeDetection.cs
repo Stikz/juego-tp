@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class CameraConeOscillatingWithPause : MonoBehaviour
 {
-    [Header("Rotación")]
+    [Header("Rotation")]
     public float rotationSpeed = 30f;      
     public float maxRotationAngle = 90f;   
     public float waitTimeAtEdge = 1f;      
@@ -13,7 +13,7 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
     private bool isWaiting = false;
     public float visualRotationOffset = 0f;
 
-    [Header("Detección")]
+    [Header("Detection")]
     public float viewDistance = 5f;
     public float viewAngle = 45f;
     public LayerMask obstacleMask;
@@ -29,8 +29,7 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        if (player == null)
-            Debug.LogWarning("No se encontró un GameObject con tag Playerr.");
+
     }
 
     private void Update()
@@ -49,7 +48,6 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
         transform.Rotate(0f, 0f, delta);
         currentRotation += delta;
 
-        // si llego a los extremos
         if (currentRotation > maxRotationAngle)
         {
             currentRotation = maxRotationAngle;
@@ -85,7 +83,6 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, viewDistance, obstacleMask | playerMask);
             if (hit.collider != null && ((1 << hit.collider.gameObject.layer) & playerMask) != 0)
             {
-                Debug.Log("¡Jugador detectado! Perdiste");
                 gameOverManager.ShowGameOver();
                 this.enabled = false;
             }
@@ -98,7 +95,6 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
 
         Gizmos.color = Color.yellow;
 
-        // offset visual
         Vector3 forward = Quaternion.Euler(0, 0, visualRotationOffset) * transform.right * viewDistance;
         Vector3 leftRay = Quaternion.Euler(0, 0, viewAngle) * forward;
         Vector3 rightRay = Quaternion.Euler(0, 0, -viewAngle) * forward;

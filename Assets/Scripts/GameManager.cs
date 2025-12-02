@@ -39,13 +39,11 @@ public class GameManager : MonoBehaviour
                 totalMoney++;
             }
         }
-        Debug.Log("Dinero total en el nivel: " + totalMoney);
     }
 
     public void collectMoney()
     {
         moneyCollected++;
-        Debug.Log("Dinero recogido: " + moneyCollected);
 
         if (moneyCollected >= totalMoney)
         {
@@ -55,7 +53,6 @@ public class GameManager : MonoBehaviour
 
     void winGame()
     {
-        Debug.Log("¡GANASTE!");
 
         victoryManager.ShowVictoryScreen();
     }

@@ -7,8 +7,7 @@ public class CameraFollow : MonoBehaviour
 
     [Header("Dead Zone")]
     public Vector2 deadZoneSize = new Vector2(2f, 2f);
-
-    [Header("Suavizado")]
+    
     public float smoothTime = 0.2f;
 
     private Vector3 velocity = Vector3.zero;

@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    [Header("Configuración")]
     public float openAngle = 90f;
     public float openSpeed = 2f;
     public bool requiresKeycard = false;
@@ -11,8 +10,8 @@ public class Door : MonoBehaviour
     private Quaternion closedRotation;
     private Quaternion targetRotation;
     private Collider2D doorCollider;
+    public bool playerNear = false;
 
-    private bool playerNear = false;  
     private GameObject player;
 
     private void Start()
@@ -20,18 +19,11 @@ public class Door : MonoBehaviour
         closedRotation = transform.rotation;
         targetRotation = closedRotation;
         doorCollider = GetComponent<Collider2D>();
-        if (doorCollider == null)
-            Debug.LogWarning("La puerta necesita un Collider2D para bloquear al jugador.");
     }
 
     private void Update()
     {
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * openSpeed);
-
-        if (playerNear && Input.GetKeyDown(KeyCode.E))
-        {
-            TryOpen(player);
-        }
     }
 
     public void TryOpen(GameObject playerObj)
@@ -40,7 +32,6 @@ public class Door : MonoBehaviour
 
         if (requiresKeycard && (inventory == null || !inventory.HasKeycard()))
         {
-            Debug.Log("¡Necesitas una keycard para abrir esta puerta!");
             return;
         }
 
