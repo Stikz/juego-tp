@@ -8,6 +8,8 @@ UserSettings/
 [Bb]uildReport/
 MemoryCaptures/
 .vs/
+.vscode
+.vsconfig
 .idea/
 *.csproj
 *.sln
