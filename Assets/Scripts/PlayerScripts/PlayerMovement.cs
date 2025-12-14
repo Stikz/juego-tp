@@ -160,6 +160,7 @@ public class PlayerMovement : MonoBehaviour
         UpdateCrosshair();
         Vector2 newPos = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(newPos);
+
     }
 
     void RotateBodyAim()

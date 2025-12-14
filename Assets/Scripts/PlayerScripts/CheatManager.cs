@@ -8,10 +8,10 @@ public class CheatManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject cheatsPanel;
-    [SerializeField] private TMP_Text cheatsText;    
+    [SerializeField] private TMP_Text cheatsText;  
 
     [Header("Speed Cheat")]
-    [SerializeField] private float speedMultiplier = 2f; 
+    [SerializeField] private float speedMultiplier = 2f;
 
     public bool Undetectable { get; private set; }
     public bool SpeedBoost { get; private set; }
@@ -61,7 +61,6 @@ public class CheatManager : MonoBehaviour
     public void ToggleUndetectable()
     {
         Undetectable = !Undetectable;
-        Debug.Log($"CHEAT Undetectable = {Undetectable}");
     }
 
     public void ToggleSpeed()
@@ -79,11 +78,10 @@ public class CheatManager : MonoBehaviour
             }
             else
             {
-                cachedPlayer.moveSpeed = baseMoveSpeed;
+                cachedPlayer.moveSpeed = baseMoveSpeed; 
             }
         }
 
-        Debug.Log($"CHEAT SpeedBoost = {SpeedBoost}");
     }
 
     public void KillAllEnemies()
@@ -98,6 +96,5 @@ public class CheatManager : MonoBehaviour
             killed++;
         }
 
-        Debug.Log($"CHEAT KillAllEnemies -> {killed} enemigos");
     }
 }
