@@ -5,9 +5,25 @@ public class PauseManager : MonoBehaviour
 {
     public GameObject pauseCanvas;
     public AudioSource menuAudio;
-
+    public GameObject defaultPauseSelected;
     private bool isPaused = false;
+    public GameObject optionsCanvas;  
+    public static class GameState
+    {
+        public static bool Paused;
+    }
+    public void OpenOptions()
+    {
+        if (pauseCanvas) pauseCanvas.SetActive(false);
+        if (optionsCanvas) optionsCanvas.SetActive(true);
 
+    }
+
+    public void CloseOptionsBackToPause()
+    {
+        if (optionsCanvas) optionsCanvas.SetActive(false);
+        if (pauseCanvas) pauseCanvas.SetActive(true);
+    }
     public void OnPause(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed) return;
@@ -22,7 +38,9 @@ public class PauseManager : MonoBehaviour
     {
         isPaused = true;
         pauseCanvas.SetActive(true);
-        Time.timeScale = 0f;
+        GameState.Paused = true;
+
+        CursorMode.SetUI();
 
         if (PlayerInput.all.Count > 0)
             PlayerInput.all[0].DeactivateInput();
@@ -30,16 +48,16 @@ public class PauseManager : MonoBehaviour
 
     public void Resume()
     {
-        if (menuAudio != null && menuAudio.clip != null)
-            menuAudio.PlayOneShot(menuAudio.clip);
-
         pauseCanvas.SetActive(false);
-        Time.timeScale = 1f;
         isPaused = false;
+        GameState.Paused = false;
+
+        CursorMode.SetGameplay();
 
         if (PlayerInput.all.Count > 0)
             PlayerInput.all[0].ActivateInput();
     }
+
 
     public void GoToMainMenu()
     {
@@ -48,7 +66,6 @@ public class PauseManager : MonoBehaviour
 
     public void Options()
     {
-        if (menuAudio != null && menuAudio.clip != null)
-            menuAudio.PlayOneShot(menuAudio.clip);
+
     }
 }

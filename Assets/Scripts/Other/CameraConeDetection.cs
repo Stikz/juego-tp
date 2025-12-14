@@ -1,6 +1,7 @@
 ﻿
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static PauseManager;
 
 public class CameraConeOscillatingWithPause : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
 
     private void Update()
     {
+        if (GameState.Paused) return;
         if (!isWaiting)
             RotateOscillating();
 
@@ -71,6 +73,8 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
 
     private void DetectPlayer()
     {
+        if (CheatManager.Instance != null && CheatManager.Instance.Undetectable)
+            return;
         if (player == null) return;
 
         Vector2 directionToPlayer = (player.position - transform.position).normalized;

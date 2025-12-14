@@ -9,6 +9,41 @@ public class ManageScenes : MonoBehaviour
 
     public AudioSource menuAudio;
 
+    public AudioClip hoverClip;
+    public AudioClip clickClip;
+
+    [Range(0.8f, 1.2f)] public float pitchMin = 0.95f;
+    [Range(0.8f, 1.2f)] public float pitchMax = 1.05f;
+
+    [Range(0.5f, 1.2f)] public float hoverPitchMin = 0.85f;
+    [Range(0.5f, 1.2f)] public float hoverPitchMax = 0.95f;
+
+    [Range(0.5f, 1.5f)] public float clickPitchMin = 1.0f;
+    [Range(0.5f, 1.5f)] public float clickPitchMax = 1.15f;
+
+    public void PlayUIHover()
+    {
+        PlayUISfx(hoverClip, hoverPitchMin, hoverPitchMax);
+    }
+
+    public void PlayUIClick()
+    {
+        PlayUISfx(clickClip, clickPitchMin, clickPitchMax);
+    }
+
+    private void PlayUISfx(AudioClip clip, float pitchMin, float pitchMax)
+    {
+        if (menuAudio == null || clip == null) return;
+
+        menuAudio.Stop();
+        menuAudio.clip = clip;
+        menuAudio.pitch = Random.Range(pitchMin, pitchMax);
+        menuAudio.Play();
+    }
+
+
+
+
     private void Awake()
     {
         if (Instance == null)
@@ -50,7 +85,7 @@ public class ManageScenes : MonoBehaviour
         }
 
         SceneManager.LoadScene(sceneName);
-
+        yield return null;      
         ActivateInputs();
     }
 

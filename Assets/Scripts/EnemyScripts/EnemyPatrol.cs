@@ -1,7 +1,8 @@
-using UnityEngine;
 using Pathfinding;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using static PauseManager;
 
 public class EnemyPatrol : MonoBehaviour
 {
@@ -60,21 +61,42 @@ public class EnemyPatrol : MonoBehaviour
         originalRotationSpeed = aiPath.rotationSpeed;
     }
 
+    private bool wasMovingBeforePause;
+
     private void Update()
     {
         if (isDead) return;
+
+        if (GameState.Paused)
+        {
+            if (aiPath != null && !aiPath.isStopped)
+            {
+                aiPath.isStopped = true;
+            }
+
+            if (footstepSource != null)
+                footstepSource.Stop();
+
+            anim.SetFloat("Speed", 0f);
+            return;
+        }
+
+        if (aiPath != null && aiPath.isStopped)
+        {
+            aiPath.isStopped = false;
+        }
 
         float currentSpeed = aiPath.desiredVelocity.magnitude;
         anim.SetFloat("Speed", currentSpeed);
 
         if (!isWaiting)
-        {
             Patrol();
-        }
 
         HandleFootsteps();
         DetectPlayer();
     }
+
+
 
     private void HandleFootsteps()
     {
@@ -117,7 +139,16 @@ public class EnemyPatrol : MonoBehaviour
     private IEnumerator WaitAtPoint()
     {
         isWaiting = true;
-        yield return new WaitForSeconds(waitTimeAtPoint);
+        float t = 0f;
+
+        while (t < waitTimeAtPoint)
+        {
+            if (!GameState.Paused)
+                t += Time.deltaTime;
+
+            yield return null;
+        }
+
         currentPoint = (currentPoint + 1) % patrolPoints.Length;
         aiPath.destination = patrolPoints[currentPoint].position;
         isWaiting = false;
@@ -125,6 +156,8 @@ public class EnemyPatrol : MonoBehaviour
 
     private void DetectPlayer()
     {
+        if (CheatManager.Instance != null && CheatManager.Instance.Undetectable)
+            return;
         if (player == null || raycastOrigin == null) return;
 
         Vector2 dir = (player.position - raycastOrigin.position).normalized;

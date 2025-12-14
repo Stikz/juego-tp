@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
+using static PauseManager;
 
 public class PlayerShooting : MonoBehaviour
 {
@@ -38,6 +39,7 @@ public class PlayerShooting : MonoBehaviour
 
     public void OnFire(InputAction.CallbackContext context)
     {
+        if (GameState.Paused) return;
         if (context.started)
         {
             Shoot();
