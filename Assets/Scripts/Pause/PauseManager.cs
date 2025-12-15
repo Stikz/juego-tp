@@ -64,8 +64,4 @@ public class PauseManager : MonoBehaviour
         ManageScenes.Instance.LoadScene("Main Menu");
     }
 
-    public void Options()
-    {
-
-    }
 }

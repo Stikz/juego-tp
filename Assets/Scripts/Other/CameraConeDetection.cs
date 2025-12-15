@@ -5,7 +5,6 @@ using static PauseManager;
 
 public class CameraConeOscillatingWithPause : MonoBehaviour
 {
-    [Header("Rotation")]
     public float rotationSpeed = 30f;      
     public float maxRotationAngle = 90f;   
     public float waitTimeAtEdge = 1f;      
@@ -14,13 +13,11 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
     private bool isWaiting = false;
     public float visualRotationOffset = 0f;
 
-    [Header("Detection")]
     public float viewDistance = 5f;
     public float viewAngle = 45f;
     public LayerMask obstacleMask;
     public LayerMask playerMask;
 
-    [Header("Debug")]
     public bool showGizmos = true;
 
     public GameOverManager gameOverManager;

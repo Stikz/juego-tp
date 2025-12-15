@@ -53,6 +53,11 @@ public class PlayerMovement : MonoBehaviour
 
     private SpriteRenderer crosshairSR;
 
+    private void Start()
+    {
+        if (!GameState.Paused)
+            CursorMode.SetGameplay();
+    }
 
     private void Awake()
     {

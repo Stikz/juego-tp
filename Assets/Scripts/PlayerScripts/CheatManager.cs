@@ -6,11 +6,9 @@ public class CheatManager : MonoBehaviour
 {
     public static CheatManager Instance;
 
-    [Header("UI")]
     [SerializeField] private GameObject cheatsPanel;
     [SerializeField] private TMP_Text cheatsText;  
 
-    [Header("Speed Cheat")]
     [SerializeField] private float speedMultiplier = 2f;
 
     public bool Undetectable { get; private set; }

@@ -6,15 +6,19 @@ public class PlayerInventory : MonoBehaviour
 {
     private bool hasKeycard = false;
 
-    [Header("Win Condition")]
     public Tilemap WinCondition;
     public TileBase tableWithMoney;
     public TileBase tableEmpty;
     private Door doorNear;
-    [Header("Keycard")]
-    public float keycardPickupRadius = 1.2f;
 
-    // This function is the one that needs to be assigned to the "Interact" event of the PlayerInput
+    public float keycardPickupRadius = 1.2f;
+    public GameObject keycardIconUI;
+
+    private void Start()
+    {
+        if (keycardIconUI != null)
+            keycardIconUI.SetActive(false);
+    }
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed) return;
@@ -86,6 +90,9 @@ public class PlayerInventory : MonoBehaviour
     public void CollectKeycard()
     {
         hasKeycard = true;
+
+        if (keycardIconUI != null)
+            keycardIconUI.SetActive(true);
     }
 
     public bool HasKeycard()
