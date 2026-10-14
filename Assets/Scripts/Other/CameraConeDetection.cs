@@ -1,9 +1,9 @@
-﻿
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static PauseManager;
 
-public class CameraConeOscillatingWithPause : MonoBehaviour
+public class CameraConeOscillatingWithPause : StealthSensorBase
 {
     public float rotationSpeed = 30f;      
     public float maxRotationAngle = 90f;   
@@ -13,21 +13,13 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
     private bool isWaiting = false;
     public float visualRotationOffset = 0f;
 
-    public float viewDistance = 5f;
-    public float viewAngle = 45f;
-    public LayerMask obstacleMask;
-    public LayerMask playerMask;
-
     public bool showGizmos = true;
 
     public GameOverManager gameOverManager;
 
-    private Transform player;
-
-    private void Start()
+    protected override void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
+        base.Start();
     }
 
     private void Update()
@@ -36,7 +28,8 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
         if (!isWaiting)
             RotateOscillating();
 
-        DetectPlayer();
+        // Patron Template Method: ejecuta el algoritmo base
+        CheckDetection();
     }
 
     private void RotateOscillating()
@@ -68,26 +61,25 @@ public class CameraConeOscillatingWithPause : MonoBehaviour
         isWaiting = false;
     }
 
-    private void DetectPlayer()
+    protected override Vector2 GetSensorOrigin()
     {
-        if (CheatManager.Instance != null && CheatManager.Instance.Undetectable)
-            return;
-        if (player == null) return;
+        return transform.position;
+    }
 
-        Vector2 directionToPlayer = (player.position - transform.position).normalized;
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-        Vector2 forward = Quaternion.Euler(0, 0, visualRotationOffset) * transform.right;
-        float angleToPlayer = Vector2.Angle(forward, directionToPlayer);
+    protected override Vector2 GetSensorForward()
+    {
+        return Quaternion.Euler(0, 0, visualRotationOffset) * transform.right;
+    }
 
-        if (distanceToPlayer < viewDistance && angleToPlayer < viewAngle)
-        {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, viewDistance, obstacleMask | playerMask);
-            if (hit.collider != null && ((1 << hit.collider.gameObject.layer) & playerMask) != 0)
-            {
-                gameOverManager.ShowGameOver();
-                this.enabled = false;
-            }
-        }
+    protected override void OnTargetDetected()
+    {
+        // Patron Observer: Notifica por evento
+        base.OnTargetDetected();
+
+        if (gameOverManager != null)
+            gameOverManager.ShowGameOver();
+
+        this.enabled = false;
     }
 
     private void OnDrawGizmos()

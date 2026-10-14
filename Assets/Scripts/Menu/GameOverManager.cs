@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using static PauseManager;
 
@@ -6,9 +6,22 @@ public class GameOverManager : MonoBehaviour
 {
     public GameObject gameOverCanvas;
 
+    private void OnEnable()
+    {
+        GameEvents.OnPlayerDetected += ShowGameOver;
+        GameEvents.OnGameOver += ShowGameOver;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnPlayerDetected -= ShowGameOver;
+        GameEvents.OnGameOver -= ShowGameOver;
+    }
+
     public void ShowGameOver()
     {
-        gameOverCanvas.SetActive(true);
+        if (gameOverCanvas != null)
+            gameOverCanvas.SetActive(true);
         GameState.Paused = true;
         CursorMode.SetUI();
         if (PlayerInput.all.Count > 0) PlayerInput.all[0].DeactivateInput();

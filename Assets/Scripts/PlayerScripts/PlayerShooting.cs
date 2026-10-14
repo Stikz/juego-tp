@@ -1,8 +1,13 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static PauseManager;
 
+/// <summary>
+/// Contexto del Patron Strategy: Administra y ejecuta la estrategia de disparo/herramienta activa (IWeaponStrategy).
+/// Permite alternar entre Taser y gadgets especiales sin modificar la logica de disparo.
+/// (Basado en la Diapositiva 6 y 7 de la presentacion Strategy de la catedra UADE).
+/// </summary>
 public class PlayerShooting : MonoBehaviour
 {
     [Header("Bullets")]
@@ -12,29 +17,88 @@ public class PlayerShooting : MonoBehaviour
 
     [Header("Ammo")]
     public int maxAmmo = 10;
-    private int currentAmmo;
 
     [Header("Shooting")]
     public float cooldown = 0.5f;
-    private float lastShootTime;
 
     [Header("HUD")]
     public TMP_Text ammoText;
 
     private PlayerSoundController soundController;
+    private Collider2D playerCollider;
 
-    private void Start()
+    // --- Patron Strategy ---
+    private IWeaponStrategy currentWeaponStrategy;
+    public IWeaponStrategy CurrentWeaponStrategy => currentWeaponStrategy;
+
+    private TaserWeaponStrategy taserStrategy;
+    private EMPWeaponStrategy empStrategy;
+
+    private void Awake()
     {
-        currentAmmo = maxAmmo;
-        UpdateHUD();
-
+        playerCollider = GetComponentInParent<Collider2D>();
         soundController = GetComponent<PlayerSoundController>();
     }
 
-    private void UpdateHUD()
+    private void Start()
+    {
+        // Instanciacion de estrategias de armamento
+        taserStrategy = new TaserWeaponStrategy(bulletPrefab, bulletSpeed, maxAmmo, cooldown);
+        empStrategy = new EMPWeaponStrategy(6f, 3, 2f);
+
+        // Estrategia por defecto: Taser
+        SetWeapon(taserStrategy);
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnWeaponAmmoChanged += OnAmmoChanged;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnWeaponAmmoChanged -= OnAmmoChanged;
+    }
+
+    private void Update()
+    {
+        // Atajo para alternar estrategias con las teclas 1 y 2
+        var kb = Keyboard.current;
+        if (kb != null)
+        {
+            if (kb.digit1Key.wasPressedThisFrame)
+            {
+                SetWeapon(taserStrategy);
+            }
+            else if (kb.digit2Key.wasPressedThisFrame)
+            {
+                SetWeapon(empStrategy);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Metodo cliente del Patron Strategy para asignar la estrategia deseada.
+    /// (Diapositiva 6 y 7 de la presentacion Strategy).
+    /// </summary>
+    public void SetWeapon(IWeaponStrategy weapon)
+    {
+        if (weapon == null) return;
+        currentWeaponStrategy = weapon;
+        UpdateHUD(currentWeaponStrategy.WeaponName, currentWeaponStrategy.CurrentAmmo, currentWeaponStrategy.MaxAmmo);
+    }
+
+    private void OnAmmoChanged(string weaponName, int currentAmmo, int maxAmmoCount)
+    {
+        UpdateHUD(weaponName, currentAmmo, maxAmmoCount);
+    }
+
+    private void UpdateHUD(string weaponName, int currentAmmo, int maxAmmoCount)
     {
         if (ammoText != null)
-            ammoText.text = currentAmmo + " / " + maxAmmo;
+        {
+            ammoText.text = $"{weaponName}: {currentAmmo} / {maxAmmoCount}";
+        }
     }
 
     public void OnFire(InputAction.CallbackContext context)
@@ -48,32 +112,14 @@ public class PlayerShooting : MonoBehaviour
 
     private void Shoot()
     {
-        if (Time.time - lastShootTime < cooldown) return;
-        if (currentAmmo <= 0) return;
-        if (bulletPrefab == null || firePoint == null) return;
+        if (currentWeaponStrategy == null) return;
 
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-
-        Collider2D playerCol = GetComponentInParent<Collider2D>();
-        Collider2D bulletCol = bullet.GetComponent<Collider2D>();
-        if (playerCol != null && bulletCol != null)
-            Physics2D.IgnoreCollision(bulletCol, playerCol);
-
-        Rigidbody2D rbBullet = bullet.GetComponent<Rigidbody2D>();
-        if (rbBullet != null)
-            rbBullet.linearVelocity = firePoint.right * bulletSpeed;
-
-        if (soundController != null)
-            soundController.PlayTaser();
-
-        lastShootTime = Time.time;
-        currentAmmo--;
-        UpdateHUD();
+        // Patron Strategy: Se delega el algoritmo de ataque a la estrategia activa
+        currentWeaponStrategy.Attack(firePoint, playerCollider, soundController);
     }
 
     public void Reload()
     {
-        currentAmmo = maxAmmo;
-        UpdateHUD();
+        currentWeaponStrategy?.Reload();
     }
 }

@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PauseManager;
 
+/// <summary>
+/// Contexto del Patron State: Mantiene la referencia al estado activo (IEnemyState)
+/// y delega las operaciones de patrullaje, espera, alerta y muerte a las clases de estado.
+/// (Basado en la Diapositiva 3, 9 y 10 de la presentacion State de la catedra UADE).
+/// </summary>
 public class EnemyPatrol : MonoBehaviour
 {
     [Header("Patrol")]
@@ -23,8 +28,6 @@ public class EnemyPatrol : MonoBehaviour
     private Seeker seeker;
 
     private int currentPoint = 0;
-    private bool isWaiting = false;
-    private bool isInvestigating = false;
     private Transform player;
     private bool isDead = false;
 
@@ -41,27 +44,76 @@ public class EnemyPatrol : MonoBehaviour
     public string deathTriggerName = "Die";
     public Light2D enemyLight;
 
-    private Coroutine lookAroundCoroutine;
     private float originalRotationSpeed;
+
+    // --- Patron State ---
+    private IEnemyState currentState;
+    public IEnemyState CurrentState => currentState;
+
+    public EnemyPatrolState PatrolState { get; private set; }
+    public EnemyWaitState WaitState { get; private set; }
+    public EnemyAlertState AlertState { get; private set; }
+    public EnemyDeadState DeadState { get; private set; }
+
+    // Propiedades publicas para acceso de los estados
+    public AIPath AIPath => aiPath;
+    public Seeker Seeker => seeker;
+    public int CurrentPoint { get => currentPoint; set => currentPoint = value; }
+    public Transform[] PatrolPoints => patrolPoints;
+    public float WaitTimeAtPoint => waitTimeAtPoint;
+    public float PatrolSpeed => patrolSpeed;
+    public Transform RaycastOrigin => raycastOrigin;
+    public float ViewDistance => viewDistance;
+    public float ViewAngle => viewAngle;
+    public LayerMask PlayerMask => playerMask;
+    public LayerMask ObstacleMask => obstacleMask;
+    public Transform Player => player;
+    public GameOverManager GameOverManager => gameOverManager;
+    public Animator Anim => anim;
+    public string DeathTriggerName => deathTriggerName;
+    public Light2D EnemyLight => enemyLight;
+    public float OriginalRotationSpeed => originalRotationSpeed;
+    public bool IsDead => isDead;
+    public AudioSource FootstepSource => footstepSource;
+    public AudioClip FootstepClip => footstepClip;
+    public float StepInterval => stepInterval;
+    public float StepTimer { get => stepTimer; set => stepTimer = value; }
 
     private void Awake()
     {
         aiPath = GetComponent<AIPath>();
         seeker = GetComponent<Seeker>();
+
+        // Inicializacion de las instancias de estado
+        PatrolState = new EnemyPatrolState();
+        WaitState = new EnemyWaitState();
+        AlertState = new EnemyAlertState();
+        DeadState = new EnemyDeadState();
     }
 
     private void Start()
     {
-        if (patrolPoints.Length == 0) return;
-
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        aiPath.canMove = true;
-        aiPath.destination = patrolPoints[currentPoint].position;
-        aiPath.maxSpeed = patrolSpeed;
-        originalRotationSpeed = aiPath.rotationSpeed;
+
+        if (aiPath != null)
+        {
+            aiPath.canMove = true;
+            aiPath.maxSpeed = patrolSpeed;
+            originalRotationSpeed = aiPath.rotationSpeed;
+        }
+
+        // Estado inicial: patrullaje
+        ChangeState(PatrolState);
     }
 
-    private bool wasMovingBeforePause;
+    public void ChangeState(IEnemyState newState)
+    {
+        if (isDead && newState != DeadState) return;
+
+        currentState?.Exit(this);
+        currentState = newState;
+        currentState?.Enter(this);
+    }
 
     private void Update()
     {
@@ -77,84 +129,50 @@ public class EnemyPatrol : MonoBehaviour
             if (footstepSource != null)
                 footstepSource.Stop();
 
-            anim.SetFloat("Speed", 0f);
+            if (anim != null)
+                anim.SetFloat("Speed", 0f);
             return;
         }
 
-        if (aiPath != null && aiPath.isStopped)
+        if (aiPath != null && aiPath.isStopped && currentState == PatrolState)
         {
             aiPath.isStopped = false;
         }
 
-        float currentSpeed = aiPath.desiredVelocity.magnitude;
-        anim.SetFloat("Speed", currentSpeed);
+        if (aiPath != null && anim != null)
+        {
+            float currentSpeed = aiPath.desiredVelocity.magnitude;
+            anim.SetFloat("Speed", currentSpeed);
+        }
 
-        if (!isWaiting)
-            Patrol();
-
-        HandleFootsteps();
-        DetectPlayer();
+        // Delegacion polimorfica al estado actual
+        currentState?.UpdateState(Time.deltaTime, this);
     }
 
-
-
-    private void HandleFootsteps()
+    public void HandleFootsteps()
     {
-        if (footstepSource == null || footstepClip == null) return;
+        if (footstepSource == null || footstepClip == null || aiPath == null) return;
 
         float speed = aiPath.desiredVelocity.magnitude;
 
-        if (speed < 0.1f || isInvestigating)
+        if (speed < 0.1f)
         {
             stepTimer = 0f;
             return;
         }
 
         stepTimer += Time.deltaTime;
-
         float adjustedInterval = stepInterval / (speed / patrolSpeed + 0.1f);
 
         if (stepTimer >= adjustedInterval)
         {
             footstepSource.pitch = Random.Range(0.9f, 1.1f);
             footstepSource.PlayOneShot(footstepClip);
-
             stepTimer = 0f;
         }
     }
 
-    private void Patrol()
-    {
-        aiPath.rotationSpeed = originalRotationSpeed;
-
-        if (aiPath.destination != patrolPoints[currentPoint].position)
-            aiPath.destination = patrolPoints[currentPoint].position;
-
-        if (Vector2.Distance(transform.position, patrolPoints[currentPoint].position) < 0.1f)
-        {
-            StartCoroutine(WaitAtPoint());
-        }
-    }
-
-    private IEnumerator WaitAtPoint()
-    {
-        isWaiting = true;
-        float t = 0f;
-
-        while (t < waitTimeAtPoint)
-        {
-            if (!GameState.Paused)
-                t += Time.deltaTime;
-
-            yield return null;
-        }
-
-        currentPoint = (currentPoint + 1) % patrolPoints.Length;
-        aiPath.destination = patrolPoints[currentPoint].position;
-        isWaiting = false;
-    }
-
-    private void DetectPlayer()
+    public void DetectPlayer()
     {
         if (CheatManager.Instance != null && CheatManager.Instance.Undetectable)
             return;
@@ -170,9 +188,8 @@ public class EnemyPatrol : MonoBehaviour
 
             if (hit.collider != null && ((1 << hit.collider.gameObject.layer) & playerMask) != 0)
             {
-                gameOverManager.ShowGameOver();
-                aiPath.canMove = false;
-                this.enabled = false;
+                // Transicion al estado de alerta
+                ChangeState(AlertState);
             }
         }
     }
@@ -181,37 +198,8 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
-
-        if (lookAroundCoroutine != null)
-            StopCoroutine(lookAroundCoroutine);
-
-        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
-        foreach (MonoBehaviour script in scripts)
-        {
-            if (script != this) script.enabled = false;
-        }
-
-        Collider2D col = GetComponent<Collider2D>();
-        if (col != null) col.enabled = false;
-
-        if (aiPath != null)
-            aiPath.canMove = false;
-
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector2.zero;
-            rb.bodyType = RigidbodyType2D.Static;
-        }
-
-        if (anim != null)
-        {
-            anim.SetTrigger(deathTriggerName);
-        }
-        if (enemyLight != null)
-            enemyLight.enabled = false;
+        ChangeState(DeadState);
     }
-
 
     private void OnDrawGizmos()
     {

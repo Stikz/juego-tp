@@ -1,13 +1,22 @@
 using UnityEngine;
 
+/// <summary>
+/// Proyectil del Taser. Compatible con el patron Object Pool para reutilizacion continua sin destruccion.
+/// </summary>
 public class Bullet : MonoBehaviour
 {
     public float speed = 15f;
     public float lifetime = 5f;
 
-    private void Start()
+    private void OnEnable()
     {
-        Destroy(gameObject, lifetime);
+        CancelInvoke(nameof(DeactivateOrDestroy));
+        Invoke(nameof(DeactivateOrDestroy), lifetime);
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke(nameof(DeactivateOrDestroy));
     }
 
     private void Update()
@@ -23,7 +32,7 @@ public class Bullet : MonoBehaviour
             enemy.Die();
         }
 
-        Destroy(gameObject);
+        DeactivateOrDestroy();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -34,14 +43,25 @@ public class Bullet : MonoBehaviour
             enemy.Die();
         }
 
+        DeactivateOrDestroy();
+    }
 
-        Destroy(gameObject);
+    private void DeactivateOrDestroy()
+    {
+        if (BulletPool.Instance != null)
+        {
+            BulletPool.Instance.ReturnBullet(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void IgnoreCollision(Collider2D col)
     {
         Collider2D bulletCollider = GetComponent<Collider2D>();
-        if (bulletCollider != null)
+        if (bulletCollider != null && col != null)
             Physics2D.IgnoreCollision(bulletCollider, col);
     }
 }

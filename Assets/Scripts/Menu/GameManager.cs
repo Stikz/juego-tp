@@ -13,11 +13,21 @@ public class GameManager : MonoBehaviour
 
     private int totalMoney;
     private int moneyCollected;
+    public int TotalMoney => totalMoney;
+    public int MoneyCollected => moneyCollected;
 
     void Awake()
     {
-        if (Instance == null) { Instance = this; }
-        else { Destroy(gameObject); }
+        // Patron Singleton (Diapositiva 4 y 7 de la presentacion UADE)
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         countInitialMoney();
     }
@@ -27,23 +37,29 @@ public class GameManager : MonoBehaviour
         totalMoney = 0;
         moneyCollected = 0;
 
-        if (victoryManager != null)
+        if (victoryManager != null && victoryManager.victoryCanvas != null)
         {
             victoryManager.victoryCanvas.SetActive(false);
         }
 
-        foreach (var pos in mesasTilemap.cellBounds.allPositionsWithin)
+        if (mesasTilemap != null && mesaConDinero_Tile != null)
         {
-            if (mesasTilemap.GetTile(pos) == mesaConDinero_Tile)
+            foreach (var pos in mesasTilemap.cellBounds.allPositionsWithin)
             {
-                totalMoney++;
+                if (mesasTilemap.GetTile(pos) == mesaConDinero_Tile)
+                {
+                    totalMoney++;
+                }
             }
         }
+
+        GameEvents.TriggerMoneyCollected(moneyCollected, totalMoney);
     }
 
     public void collectMoney()
     {
         moneyCollected++;
+        GameEvents.TriggerMoneyCollected(moneyCollected, totalMoney);
 
         if (moneyCollected >= totalMoney)
         {
@@ -53,7 +69,10 @@ public class GameManager : MonoBehaviour
 
     void winGame()
     {
-
-        victoryManager.ShowVictoryScreen();
+        GameEvents.TriggerVictory();
+        if (victoryManager != null)
+        {
+            victoryManager.ShowVictoryScreen();
+        }
     }
 }
