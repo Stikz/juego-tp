@@ -1,34 +1,26 @@
-
+using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using static PauseManager;
 
 public class CameraConeOscillatingWithPause : StealthSensorBase
 {
-    public float rotationSpeed = 30f;      
-    public float maxRotationAngle = 90f;   
-    public float waitTimeAtEdge = 1f;      
-    private float currentRotation = 0f;    
-    private bool rotatingRight = true;
-    private bool isWaiting = false;
+    public float rotationSpeed = 30f;
+    public float maxRotationAngle = 90f;
+    public float waitTimeAtEdge = 1f;
     public float visualRotationOffset = 0f;
-
     public bool showGizmos = true;
 
-    public GameOverManager gameOverManager;
-
-    protected override void Start()
-    {
-        base.Start();
-    }
+    private float currentRotation = 0f;
+    private bool rotatingRight = true;
+    private bool isWaiting = false;
 
     private void Update()
     {
         if (GameState.Paused) return;
+
         if (!isWaiting)
             RotateOscillating();
 
-        // Patron Template Method: ejecuta el algoritmo base
         CheckDetection();
     }
 
@@ -54,7 +46,7 @@ public class CameraConeOscillatingWithPause : StealthSensorBase
         }
     }
 
-    private System.Collections.IEnumerator WaitAtEdge()
+    private IEnumerator WaitAtEdge()
     {
         isWaiting = true;
         yield return new WaitForSeconds(waitTimeAtEdge);
@@ -73,13 +65,8 @@ public class CameraConeOscillatingWithPause : StealthSensorBase
 
     protected override void OnTargetDetected()
     {
-        // Patron Observer: Notifica por evento
         base.OnTargetDetected();
-
-        if (gameOverManager != null)
-            gameOverManager.ShowGameOver();
-
-        this.enabled = false;
+        enabled = false;
     }
 
     private void OnDrawGizmos()

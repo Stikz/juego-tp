@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
@@ -7,8 +8,7 @@ public class CheatManager : MonoBehaviour
     public static CheatManager Instance;
 
     [SerializeField] private GameObject cheatsPanel;
-    [SerializeField] private TMP_Text cheatsText;  
-
+    [SerializeField] private TMP_Text cheatsText;
     [SerializeField] private float speedMultiplier = 2f;
 
     public bool Undetectable { get; private set; }
@@ -17,11 +17,22 @@ public class CheatManager : MonoBehaviour
     private PlayerMovement cachedPlayer;
     private float baseMoveSpeed;
 
+    private Dictionary<Key, ICommand> commands;
+
     private void Awake()
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        // ACA SE APLICA EL PATRON COMMAND (invoker: cada tecla tiene asociado un comando)
+        commands = new Dictionary<Key, ICommand>
+        {
+            { Key.F1, new ToggleHelpCommand(this) },
+            { Key.F2, new ToggleUndetectableCommand(this) },
+            { Key.F3, new ToggleSpeedCommand(this) },
+            { Key.F4, new KillAllEnemiesCommand() }
+        };
     }
 
     private void Start()
@@ -42,12 +53,13 @@ public class CheatManager : MonoBehaviour
     private void Update()
     {
         var kb = Keyboard.current;
-        if (kb == null) return;
+        if (kb == null || commands == null) return;
 
-        if (kb.f1Key.wasPressedThisFrame) ToggleHelp();
-        if (kb.f2Key.wasPressedThisFrame) ToggleUndetectable();
-        if (kb.f3Key.wasPressedThisFrame) ToggleSpeed();
-        if (kb.f4Key.wasPressedThisFrame) KillAllEnemies();
+        foreach (var pair in commands)
+        {
+            if (kb[pair.Key].wasPressedThisFrame)
+                pair.Value.Execute();
+        }
     }
 
     public void ToggleHelp()
@@ -66,33 +78,16 @@ public class CheatManager : MonoBehaviour
         SpeedBoost = !SpeedBoost;
 
         if (cachedPlayer == null) cachedPlayer = FindFirstObjectByType<PlayerMovement>();
+        if (cachedPlayer == null) return;
 
-        if (cachedPlayer != null)
+        if (SpeedBoost)
         {
-            if (SpeedBoost)
-            {
-                baseMoveSpeed = cachedPlayer.moveSpeed;
-                cachedPlayer.moveSpeed = baseMoveSpeed * speedMultiplier;
-            }
-            else
-            {
-                cachedPlayer.moveSpeed = baseMoveSpeed; 
-            }
+            baseMoveSpeed = cachedPlayer.moveSpeed;
+            cachedPlayer.moveSpeed = baseMoveSpeed * speedMultiplier;
         }
-
-    }
-
-    public void KillAllEnemies()
-    {
-        var enemies = FindObjectsByType<EnemyPatrol>(FindObjectsSortMode.None);
-        int killed = 0;
-
-        foreach (var e in enemies)
+        else
         {
-            if (e == null) continue;
-            e.Die();
-            killed++;
+            cachedPlayer.moveSpeed = baseMoveSpeed;
         }
-
     }
 }

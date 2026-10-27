@@ -46,6 +46,7 @@ public class ManageScenes : MonoBehaviour
 
     private void Awake()
     {
+        // ACA SE APLICA EL PATRON SINGLETON (con DontDestroyOnLoad, persiste entre escenas)
         if (Instance == null)
         {
             Instance = this;

@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,70 +8,44 @@ public class GameManager : MonoBehaviour
     public Tilemap mesasTilemap;
     public TileBase mesaConDinero_Tile;
 
-    public VictoryManager victoryManager; 
-
     private int totalMoney;
     private int moneyCollected;
-    public int TotalMoney => totalMoney;
-    public int MoneyCollected => moneyCollected;
 
-    void Awake()
+    private void Awake()
     {
-        // Patron Singleton (Diapositiva 4 y 7 de la presentacion UADE)
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else if (Instance != this)
+        // ACA SE APLICA EL PATRON SINGLETON (una sola instancia, acceso global)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+        Instance = this;
 
-        countInitialMoney();
+        CountInitialMoney();
     }
 
-    void countInitialMoney()
+    private void CountInitialMoney()
     {
         totalMoney = 0;
         moneyCollected = 0;
 
-        if (victoryManager != null && victoryManager.victoryCanvas != null)
-        {
-            victoryManager.victoryCanvas.SetActive(false);
-        }
+        if (mesasTilemap == null || mesaConDinero_Tile == null) return;
 
-        if (mesasTilemap != null && mesaConDinero_Tile != null)
+        foreach (var pos in mesasTilemap.cellBounds.allPositionsWithin)
         {
-            foreach (var pos in mesasTilemap.cellBounds.allPositionsWithin)
-            {
-                if (mesasTilemap.GetTile(pos) == mesaConDinero_Tile)
-                {
-                    totalMoney++;
-                }
-            }
+            if (mesasTilemap.GetTile(pos) == mesaConDinero_Tile)
+                totalMoney++;
         }
-
-        GameEvents.TriggerMoneyCollected(moneyCollected, totalMoney);
     }
 
     public void collectMoney()
     {
         moneyCollected++;
-        GameEvents.TriggerMoneyCollected(moneyCollected, totalMoney);
 
         if (moneyCollected >= totalMoney)
         {
-            winGame(); 
-        }
-    }
-
-    void winGame()
-    {
-        GameEvents.TriggerVictory();
-        if (victoryManager != null)
-        {
-            victoryManager.ShowVictoryScreen();
+            // ACA SE APLICA EL PATRON OBSERVER (avisa la victoria sin conocer al VictoryManager)
+            GameEvents.TriggerVictory();
         }
     }
 }

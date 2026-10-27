@@ -1,9 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Estado Concreto del Patron State: El enemigo es neutralizado por el Taser.
-/// Desactiva colisiones, luces y movimiento, ejecutando la animacion de caida.
-/// </summary>
+// ACA SE APLICA EL PATRON STATE (estado concreto: neutralizado)
 public class EnemyDeadState : IEnemyState
 {
     public void Enter(EnemyPatrol enemy)
@@ -25,24 +22,17 @@ public class EnemyDeadState : IEnemyState
         }
 
         if (enemy.Anim != null && !string.IsNullOrEmpty(enemy.DeathTriggerName))
-        {
             enemy.Anim.SetTrigger(enemy.DeathTriggerName);
-        }
 
         if (enemy.EnemyLight != null)
-        {
             enemy.EnemyLight.enabled = false;
-        }
 
         if (enemy.FootstepSource != null)
-        {
             enemy.FootstepSource.Stop();
-        }
     }
 
     public void UpdateState(float deltaTime, EnemyPatrol enemy)
     {
-        // Un enemigo muerto/aturdido no procesa logica
     }
 
     public void Exit(EnemyPatrol enemy)

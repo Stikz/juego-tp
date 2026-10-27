@@ -1,22 +1,27 @@
 using UnityEngine;
 
-/// <summary>
-/// Proyectil del Taser. Compatible con el patron Object Pool para reutilizacion continua sin destruccion.
-/// </summary>
 public class Bullet : MonoBehaviour
 {
     public float speed = 15f;
     public float lifetime = 5f;
 
+    private BulletPool pool;
+    private bool released;
+
+    public void SetPool(BulletPool bulletPool)
+    {
+        pool = bulletPool;
+    }
+
     private void OnEnable()
     {
-        CancelInvoke(nameof(DeactivateOrDestroy));
-        Invoke(nameof(DeactivateOrDestroy), lifetime);
+        released = false;
+        Invoke(nameof(ReturnToPool), lifetime);
     }
 
     private void OnDisable()
     {
-        CancelInvoke(nameof(DeactivateOrDestroy));
+        CancelInvoke(nameof(ReturnToPool));
     }
 
     private void Update()
@@ -28,40 +33,29 @@ public class Bullet : MonoBehaviour
     {
         EnemyPatrol enemy = collision.gameObject.GetComponent<EnemyPatrol>();
         if (enemy != null)
-        {
             enemy.Die();
-        }
 
-        DeactivateOrDestroy();
+        ReturnToPool();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         EnemyPatrol enemy = other.GetComponent<EnemyPatrol>();
         if (enemy != null)
-        {
             enemy.Die();
-        }
 
-        DeactivateOrDestroy();
+        ReturnToPool();
     }
 
-    private void DeactivateOrDestroy()
+    // ACA SE APLICA EL PATRON OBJECT POOL (la bala vuelve al pool en vez de destruirse)
+    private void ReturnToPool()
     {
-        if (BulletPool.Instance != null)
-        {
-            BulletPool.Instance.ReturnBullet(gameObject);
-        }
+        if (released) return;
+        released = true;
+
+        if (pool != null)
+            pool.Release(this);
         else
-        {
             Destroy(gameObject);
-        }
-    }
-
-    public void IgnoreCollision(Collider2D col)
-    {
-        Collider2D bulletCollider = GetComponent<Collider2D>();
-        if (bulletCollider != null && col != null)
-            Physics2D.IgnoreCollision(bulletCollider, col);
     }
 }

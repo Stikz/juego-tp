@@ -1,71 +1,47 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
-/// <summary>
-/// Patron Object Pool: Reutiliza proyectiles del Taser para evitar la sobrecarga
-/// del Garbage Collector ocasionada por Instantiate() y Destroy() continuos.
-/// </summary>
-public class BulletPool : MonoBehaviour
+// ACA SE APLICA EL PATRON OBJECT POOL (ObjectPool<T> de Unity, como en la clase)
+public class BulletPool
 {
-    public static BulletPool Instance { get; private set; }
+    private readonly Bullet prefab;
+    private readonly ObjectPool<Bullet> pool;
 
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private int initialPoolSize = 15;
-
-    private readonly Queue<GameObject> pool = new Queue<GameObject>();
-
-    private void Awake()
+    public BulletPool(Bullet prefab, int defaultCapacity = 10, int maxSize = 30)
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else if (Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        InitializePool();
+        this.prefab = prefab;
+        pool = new ObjectPool<Bullet>(CreatePoolItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, false, defaultCapacity, maxSize);
     }
 
-    private void InitializePool()
+    public Bullet Get()
     {
-        if (bulletPrefab == null) return;
-
-        for (int i = 0; i < initialPoolSize; i++)
-        {
-            GameObject bullet = Instantiate(bulletPrefab, transform);
-            bullet.SetActive(false);
-            pool.Enqueue(bullet);
-        }
+        return pool.Get();
     }
 
-    public GameObject GetBullet(Vector3 position, Quaternion rotation)
+    public void Release(Bullet bullet)
     {
-        GameObject bullet;
+        pool.Release(bullet);
+    }
 
-        if (pool.Count > 0)
-        {
-            bullet = pool.Dequeue();
-        }
-        else
-        {
-            // Si el pool se agota, expande dinamicamente
-            bullet = Instantiate(bulletPrefab, transform);
-        }
-
-        bullet.transform.position = position;
-        bullet.transform.rotation = rotation;
-        bullet.SetActive(true);
-
+    private Bullet CreatePoolItem()
+    {
+        Bullet bullet = Object.Instantiate(prefab);
+        bullet.SetPool(this);
         return bullet;
     }
 
-    public void ReturnBullet(GameObject bullet)
+    private void OnTakeFromPool(Bullet bullet)
     {
-        bullet.SetActive(false);
-        bullet.transform.SetParent(transform);
-        pool.Enqueue(bullet);
+        bullet.gameObject.SetActive(true);
+    }
+
+    private void OnReturnedToPool(Bullet bullet)
+    {
+        bullet.gameObject.SetActive(false);
+    }
+
+    private void OnDestroyPoolObject(Bullet bullet)
+    {
+        Object.Destroy(bullet.gameObject);
     }
 }

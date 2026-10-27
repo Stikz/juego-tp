@@ -1,8 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Estado Concreto del Patron State: El enemigo se traslada activamente entre puntos de patrulla.
-/// </summary>
+// ACA SE APLICA EL PATRON STATE (estado concreto: patrullar)
 public class EnemyPatrolState : IEnemyState
 {
     public void Enter(EnemyPatrol enemy)
@@ -30,7 +28,6 @@ public class EnemyPatrolState : IEnemyState
             if (enemy.AIPath.destination != targetPoint.position)
                 enemy.AIPath.destination = targetPoint.position;
 
-            // Verificar si llego al waypoint para pasar al estado de espera
             if (Vector2.Distance(enemy.transform.position, targetPoint.position) < 0.2f)
             {
                 enemy.ChangeState(enemy.WaitState);
@@ -44,7 +41,6 @@ public class EnemyPatrolState : IEnemyState
 
     public void Exit(EnemyPatrol enemy)
     {
-        // Al salir de patrullar se detiene el sonido de pasos si aplica
         if (enemy.FootstepSource != null)
             enemy.FootstepSource.Stop();
     }

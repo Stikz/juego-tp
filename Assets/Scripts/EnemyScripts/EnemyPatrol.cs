@@ -1,14 +1,9 @@
 using Pathfinding;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PauseManager;
 
-/// <summary>
-/// Contexto del Patron State: Mantiene la referencia al estado activo (IEnemyState)
-/// y delega las operaciones de patrullaje, espera, alerta y muerte a las clases de estado.
-/// (Basado en la Diapositiva 3, 9 y 10 de la presentacion State de la catedra UADE).
-/// </summary>
+// ACA SE APLICA EL PATRON STATE (contexto: guarda el estado actual y le delega el comportamiento)
 public class EnemyPatrol : MonoBehaviour
 {
     [Header("Patrol")]
@@ -23,16 +18,10 @@ public class EnemyPatrol : MonoBehaviour
     public LayerMask obstacleMask;
     public Transform raycastOrigin;
 
-    [Header("Pathfinding")]
     private AIPath aiPath;
-    private Seeker seeker;
-
     private int currentPoint = 0;
     private Transform player;
     private bool isDead = false;
-
-    [Header("Game Over")]
-    public GameOverManager gameOverManager;
 
     [Header("Footstep sound")]
     public AudioSource footstepSource;
@@ -44,47 +33,27 @@ public class EnemyPatrol : MonoBehaviour
     public string deathTriggerName = "Die";
     public Light2D enemyLight;
 
-    private float originalRotationSpeed;
-
-    // --- Patron State ---
     private IEnemyState currentState;
-    public IEnemyState CurrentState => currentState;
 
     public EnemyPatrolState PatrolState { get; private set; }
     public EnemyWaitState WaitState { get; private set; }
     public EnemyAlertState AlertState { get; private set; }
     public EnemyDeadState DeadState { get; private set; }
 
-    // Propiedades publicas para acceso de los estados
     public AIPath AIPath => aiPath;
-    public Seeker Seeker => seeker;
     public int CurrentPoint { get => currentPoint; set => currentPoint = value; }
     public Transform[] PatrolPoints => patrolPoints;
     public float WaitTimeAtPoint => waitTimeAtPoint;
     public float PatrolSpeed => patrolSpeed;
-    public Transform RaycastOrigin => raycastOrigin;
-    public float ViewDistance => viewDistance;
-    public float ViewAngle => viewAngle;
-    public LayerMask PlayerMask => playerMask;
-    public LayerMask ObstacleMask => obstacleMask;
-    public Transform Player => player;
-    public GameOverManager GameOverManager => gameOverManager;
     public Animator Anim => anim;
     public string DeathTriggerName => deathTriggerName;
     public Light2D EnemyLight => enemyLight;
-    public float OriginalRotationSpeed => originalRotationSpeed;
-    public bool IsDead => isDead;
     public AudioSource FootstepSource => footstepSource;
-    public AudioClip FootstepClip => footstepClip;
-    public float StepInterval => stepInterval;
-    public float StepTimer { get => stepTimer; set => stepTimer = value; }
 
     private void Awake()
     {
         aiPath = GetComponent<AIPath>();
-        seeker = GetComponent<Seeker>();
 
-        // Inicializacion de las instancias de estado
         PatrolState = new EnemyPatrolState();
         WaitState = new EnemyWaitState();
         AlertState = new EnemyAlertState();
@@ -99,10 +68,8 @@ public class EnemyPatrol : MonoBehaviour
         {
             aiPath.canMove = true;
             aiPath.maxSpeed = patrolSpeed;
-            originalRotationSpeed = aiPath.rotationSpeed;
         }
 
-        // Estado inicial: patrullaje
         ChangeState(PatrolState);
     }
 
@@ -122,9 +89,7 @@ public class EnemyPatrol : MonoBehaviour
         if (GameState.Paused)
         {
             if (aiPath != null && !aiPath.isStopped)
-            {
                 aiPath.isStopped = true;
-            }
 
             if (footstepSource != null)
                 footstepSource.Stop();
@@ -135,17 +100,11 @@ public class EnemyPatrol : MonoBehaviour
         }
 
         if (aiPath != null && aiPath.isStopped && currentState == PatrolState)
-        {
             aiPath.isStopped = false;
-        }
 
         if (aiPath != null && anim != null)
-        {
-            float currentSpeed = aiPath.desiredVelocity.magnitude;
-            anim.SetFloat("Speed", currentSpeed);
-        }
+            anim.SetFloat("Speed", aiPath.desiredVelocity.magnitude);
 
-        // Delegacion polimorfica al estado actual
         currentState?.UpdateState(Time.deltaTime, this);
     }
 
@@ -187,10 +146,7 @@ public class EnemyPatrol : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(raycastOrigin.position, dir, viewDistance, playerMask | obstacleMask);
 
             if (hit.collider != null && ((1 << hit.collider.gameObject.layer) & playerMask) != 0)
-            {
-                // Transicion al estado de alerta
                 ChangeState(AlertState);
-            }
         }
     }
 
