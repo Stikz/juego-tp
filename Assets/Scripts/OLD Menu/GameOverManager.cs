@@ -4,7 +4,7 @@ public class GameOverManager : MonoBehaviour
 {
     public GameObject gameOverCanvas;
 
-    // ACA SE APLICA EL PATRON OBSERVER (observer: se suscribe a la deteccion del jugador)
+    // PATRON OBSERVER
     private void OnEnable()
     {
         GameEvents.OnPlayerDetected += ShowGameOver;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// ACA SE APLICA EL PATRON STATE (estado concreto: patrullar)
+// PATRON STATE
 public class EnemyPatrolState : IEnemyState
 {
     public void Enter(EnemyPatrol enemy)

@@ -57,6 +57,20 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!GameState.Paused)
             CursorMode.SetGameplay();
+
+        ApplySkin();
+    }
+
+    // PATRON ABSTRACT FACTORY
+    private void ApplySkin()
+    {
+        if (bodyGraphics == null) return;
+
+        SpriteRenderer bodyRenderer = bodyGraphics.GetComponent<SpriteRenderer>();
+        Sprite skinSprite = SkinSelection.GetFactory().CreatePlayerSprite();
+
+        if (bodyRenderer != null && skinSprite != null)
+            bodyRenderer.sprite = skinSprite;
     }
 
     private void Awake()

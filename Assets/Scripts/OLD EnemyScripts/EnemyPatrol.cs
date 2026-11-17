@@ -3,17 +3,16 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PauseManager;
 
-// ACA SE APLICA EL PATRON STATE (contexto: guarda el estado actual y le delega el comportamiento)
+// PATRON STATE
 public class EnemyPatrol : MonoBehaviour
 {
+    [Header("Type")]
+    public EnemyType enemyType;
+
     [Header("Patrol")]
     public Transform[] patrolPoints;
-    public float waitTimeAtPoint = 2f;
-    public float patrolSpeed = 2f;
 
     [Header("Detection")]
-    public float viewDistance = 5f;
-    public float viewAngle = 45f;
     public LayerMask playerMask;
     public LayerMask obstacleMask;
     public Transform raycastOrigin;
@@ -43,8 +42,8 @@ public class EnemyPatrol : MonoBehaviour
     public AIPath AIPath => aiPath;
     public int CurrentPoint { get => currentPoint; set => currentPoint = value; }
     public Transform[] PatrolPoints => patrolPoints;
-    public float WaitTimeAtPoint => waitTimeAtPoint;
-    public float PatrolSpeed => patrolSpeed;
+    public float WaitTimeAtPoint => enemyType.waitTimeAtPoint;
+    public float PatrolSpeed => enemyType.patrolSpeed;
     public Animator Anim => anim;
     public string DeathTriggerName => deathTriggerName;
     public Light2D EnemyLight => enemyLight;
@@ -53,6 +52,7 @@ public class EnemyPatrol : MonoBehaviour
     private void Awake()
     {
         aiPath = GetComponent<AIPath>();
+        ApplyType();
 
         PatrolState = new EnemyPatrolState();
         WaitState = new EnemyWaitState();
@@ -67,10 +67,20 @@ public class EnemyPatrol : MonoBehaviour
         if (aiPath != null)
         {
             aiPath.canMove = true;
-            aiPath.maxSpeed = patrolSpeed;
+            aiPath.maxSpeed = enemyType.patrolSpeed;
         }
 
         ChangeState(PatrolState);
+    }
+
+    // PATRON TYPE OBJECT
+    private void ApplyType()
+    {
+        if (enemyType == null)
+            enemyType = Resources.Load<EnemyType>("EnemyTypes/Guardia");
+
+        if (anim == null)
+            anim = GetComponent<Animator>();
     }
 
     public void ChangeState(IEnemyState newState)
@@ -121,7 +131,7 @@ public class EnemyPatrol : MonoBehaviour
         }
 
         stepTimer += Time.deltaTime;
-        float adjustedInterval = stepInterval / (speed / patrolSpeed + 0.1f);
+        float adjustedInterval = stepInterval / (speed / enemyType.patrolSpeed + 0.1f);
 
         if (stepTimer >= adjustedInterval)
         {
@@ -141,9 +151,9 @@ public class EnemyPatrol : MonoBehaviour
         float dist = Vector2.Distance(raycastOrigin.position, player.position);
         float angle = Vector2.Angle(raycastOrigin.right, dir);
 
-        if (dist < viewDistance && angle < viewAngle)
+        if (dist < enemyType.viewDistance && angle < enemyType.viewAngle)
         {
-            RaycastHit2D hit = Physics2D.Raycast(raycastOrigin.position, dir, viewDistance, playerMask | obstacleMask);
+            RaycastHit2D hit = Physics2D.Raycast(raycastOrigin.position, dir, enemyType.viewDistance, playerMask | obstacleMask);
 
             if (hit.collider != null && ((1 << hit.collider.gameObject.layer) & playerMask) != 0)
                 ChangeState(AlertState);
@@ -159,12 +169,12 @@ public class EnemyPatrol : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (raycastOrigin == null) return;
+        if (raycastOrigin == null || enemyType == null) return;
 
         Gizmos.color = Color.red;
-        Vector3 forward = raycastOrigin.right * viewDistance;
-        Vector3 left = Quaternion.Euler(0, 0, viewAngle) * forward;
-        Vector3 right = Quaternion.Euler(0, 0, -viewAngle) * forward;
+        Vector3 forward = raycastOrigin.right * enemyType.viewDistance;
+        Vector3 left = Quaternion.Euler(0, 0, enemyType.viewAngle) * forward;
+        Vector3 right = Quaternion.Euler(0, 0, -enemyType.viewAngle) * forward;
 
         Gizmos.DrawLine(raycastOrigin.position, raycastOrigin.position + left);
         Gizmos.DrawLine(raycastOrigin.position, raycastOrigin.position + right);

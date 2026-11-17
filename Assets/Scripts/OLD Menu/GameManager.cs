@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // ACA SE APLICA EL PATRON SINGLETON (una sola instancia, acceso global)
+        // PATRON SINGLETON
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
 
         if (moneyCollected >= totalMoney)
         {
-            // ACA SE APLICA EL PATRON OBSERVER (avisa la victoria sin conocer al VictoryManager)
+            // PATRON OBSERVER
             GameEvents.TriggerVictory();
         }
     }

@@ -1,56 +1,41 @@
-using System.Collections;
 using UnityEngine;
 using static PauseManager;
 
+public enum CameraMode { Giratoria, FijaIntermitente }
+
 public class CameraConeOscillatingWithPause : StealthSensorBase
 {
+    public CameraMode mode = CameraMode.Giratoria;
     public float rotationSpeed = 30f;
     public float maxRotationAngle = 90f;
     public float waitTimeAtEdge = 1f;
+    public float blinkInterval = 4f;
     public float visualRotationOffset = 0f;
     public bool showGizmos = true;
 
-    private float currentRotation = 0f;
-    private bool rotatingRight = true;
-    private bool isWaiting = false;
+    private ICameraBehaviour behaviour;
+
+    protected override void Start()
+    {
+        base.Start();
+
+        // PATRON STRATEGY
+        if (mode == CameraMode.FijaIntermitente)
+            behaviour = new BlinkingCameraBehaviour(blinkInterval);
+        else
+            behaviour = new RotatingCameraBehaviour();
+
+        behaviour.Begin(this);
+    }
 
     private void Update()
     {
         if (GameState.Paused) return;
 
-        if (!isWaiting)
-            RotateOscillating();
+        behaviour.Tick(this, Time.deltaTime);
 
-        CheckDetection();
-    }
-
-    private void RotateOscillating()
-    {
-        float delta = rotationSpeed * Time.deltaTime;
-        if (!rotatingRight) delta = -delta;
-
-        transform.Rotate(0f, 0f, delta);
-        currentRotation += delta;
-
-        if (currentRotation > maxRotationAngle)
-        {
-            currentRotation = maxRotationAngle;
-            rotatingRight = false;
-            StartCoroutine(WaitAtEdge());
-        }
-        else if (currentRotation < -maxRotationAngle)
-        {
-            currentRotation = -maxRotationAngle;
-            rotatingRight = true;
-            StartCoroutine(WaitAtEdge());
-        }
-    }
-
-    private IEnumerator WaitAtEdge()
-    {
-        isWaiting = true;
-        yield return new WaitForSeconds(waitTimeAtEdge);
-        isWaiting = false;
+        if (behaviour.IsWatching)
+            CheckDetection();
     }
 
     protected override Vector2 GetSensorOrigin()

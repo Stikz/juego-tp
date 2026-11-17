@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: VeteranGuard
+  m_Controller: {fileID: 9100000, guid: 98842357314eaaf4988898bd473833fe, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: cf121e29cea71f9458647100c68955a5, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 06032f2ca2b8490d91f4a72b44d5e178, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: eac234da08a982148af7bbe349a8f708, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 8543baf214654b51adafa42c13ad06aa, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 9f8e638c8dfa74a42b6e737fd954824a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 80b3588a035f4825829d9e8a1a5971f8, type: 2}

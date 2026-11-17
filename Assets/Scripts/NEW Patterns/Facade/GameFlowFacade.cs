@@ -1,7 +1,7 @@
 using UnityEngine.InputSystem;
 using static PauseManager;
 
-// ACA SE APLICA EL PATRON FACADE (una sola entrada para pausa, cursor e input)
+// PATRON FACADE
 public static class GameFlowFacade
 {
     public static void StopGameplay()

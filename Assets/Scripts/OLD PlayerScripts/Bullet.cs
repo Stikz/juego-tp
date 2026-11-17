@@ -47,7 +47,7 @@ public class Bullet : MonoBehaviour
         ReturnToPool();
     }
 
-    // ACA SE APLICA EL PATRON OBJECT POOL (la bala vuelve al pool en vez de destruirse)
+    // PATRON OBJECT POOL
     private void ReturnToPool()
     {
         if (released) return;

@@ -11,7 +11,7 @@ public class VictoryManager : MonoBehaviour
             victoryCanvas.SetActive(false);
     }
 
-    // ACA SE APLICA EL PATRON OBSERVER (observer: se suscribe a la victoria)
+    // PATRON OBSERVER
     private void OnEnable()
     {
         GameEvents.OnVictory += ShowVictoryScreen;

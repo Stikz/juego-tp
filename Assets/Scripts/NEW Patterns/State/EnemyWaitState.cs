@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// ACA SE APLICA EL PATRON STATE (estado concreto: esperar en el punto)
+// PATRON STATE
 public class EnemyWaitState : IEnemyState
 {
     private float timer = 0f;

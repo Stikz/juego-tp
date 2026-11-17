@@ -1,4 +1,4 @@
-// ACA SE APLICA EL PATRON COMMAND (interfaz del comando)
+// PATRON COMMAND
 public interface ICommand
 {
     void Execute();

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// ACA SE APLICA EL PATRON COMMAND (comandos concretos de los cheats)
+// PATRON COMMAND
 public class ToggleHelpCommand : ICommand
 {
     private readonly CheatManager receiver;

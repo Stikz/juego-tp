@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// ACA SE APLICA EL PATRON STATE (estado concreto: jugador detectado)
+// PATRON STATE
 public class EnemyAlertState : IEnemyState
 {
     public void Enter(EnemyPatrol enemy)
@@ -17,7 +17,7 @@ public class EnemyAlertState : IEnemyState
         if (enemy.FootstepSource != null)
             enemy.FootstepSource.Stop();
 
-        // ACA SE APLICA EL PATRON OBSERVER (el guardia avisa, no conoce al GameOverManager)
+        // PATRON OBSERVER
         GameEvents.TriggerPlayerDetected();
     }
 

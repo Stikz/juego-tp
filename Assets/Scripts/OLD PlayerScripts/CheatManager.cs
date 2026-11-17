@@ -25,7 +25,7 @@ public class CheatManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // ACA SE APLICA EL PATRON COMMAND (invoker: cada tecla tiene asociado un comando)
+        // PATRON COMMAND
         commands = new Dictionary<Key, ICommand>
         {
             { Key.F1, new ToggleHelpCommand(this) },

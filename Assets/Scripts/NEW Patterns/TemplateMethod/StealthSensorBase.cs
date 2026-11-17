@@ -55,7 +55,7 @@ public abstract class StealthSensorBase : MonoBehaviour
 
     protected virtual void OnTargetDetected()
     {
-        // ACA SE APLICA EL PATRON OBSERVER (el sensor avisa, no conoce al GameOverManager)
+        // PATRON OBSERVER
         GameEvents.TriggerPlayerDetected();
     }
 }

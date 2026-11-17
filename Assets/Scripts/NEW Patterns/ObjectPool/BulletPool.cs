@@ -1,15 +1,17 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-// ACA SE APLICA EL PATRON OBJECT POOL (ObjectPool<T> de Unity, como en la clase)
+// PATRON OBJECT POOL
 public class BulletPool
 {
     private readonly Bullet prefab;
+    private readonly RuntimeAnimatorController bulletLook;
     private readonly ObjectPool<Bullet> pool;
 
-    public BulletPool(Bullet prefab, int defaultCapacity = 10, int maxSize = 30)
+    public BulletPool(Bullet prefab, RuntimeAnimatorController bulletLook, int defaultCapacity = 10, int maxSize = 30)
     {
         this.prefab = prefab;
+        this.bulletLook = bulletLook;
         pool = new ObjectPool<Bullet>(CreatePoolItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, false, defaultCapacity, maxSize);
     }
 
@@ -27,6 +29,10 @@ public class BulletPool
     {
         Bullet bullet = Object.Instantiate(prefab);
         bullet.SetPool(this);
+
+        Animator animator = bullet.GetComponent<Animator>();
+        if (animator != null && bulletLook != null)
+            animator.runtimeAnimatorController = bulletLook;
         return bullet;
     }
 

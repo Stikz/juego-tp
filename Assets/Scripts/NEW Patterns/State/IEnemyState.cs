@@ -1,4 +1,4 @@
-// ACA SE APLICA EL PATRON STATE (interfaz de estado)
+// PATRON STATE
 public interface IEnemyState
 {
     void Enter(EnemyPatrol enemy);

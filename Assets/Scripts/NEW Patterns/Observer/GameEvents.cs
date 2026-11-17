@@ -1,6 +1,6 @@
 using System;
 
-// ACA SE APLICA EL PATRON OBSERVER (subject con eventos: los emisores no conocen a los que escuchan)
+// PATRON OBSERVER
 public static class GameEvents
 {
     public static event Action OnPlayerDetected;

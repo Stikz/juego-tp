@@ -30,9 +30,12 @@ public class PlayerShooting : MonoBehaviour
         playerCollider = GetComponentInParent<Collider2D>();
         soundController = GetComponent<PlayerSoundController>();
 
-        // ACA SE APLICA EL PATRON OBJECT POOL (el taser crea su pool de balas)
+        // PATRON ABSTRACT FACTORY
+        ISkinFactory skin = SkinSelection.GetFactory();
+
+        // PATRON OBJECT POOL
         if (bulletPrefab != null)
-            bulletPool = new BulletPool(bulletPrefab.GetComponent<Bullet>());
+            bulletPool = new BulletPool(bulletPrefab.GetComponent<Bullet>(), skin.CreateBulletAnimator());
     }
 
     private void Start()

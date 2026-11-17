@@ -10,17 +10,15 @@ public class SettingsManager : MonoBehaviour
     public const string MasterKey = "Vol_Master";
     public const string SfxKey = "Vol_Sfx";
     public const string MusicKey = "Vol_Music";
+    public const string FullscreenKey = "Video_Fullscreen";
 
     const string MasterParam = "MasterVolume";
     const string SfxParam = "SfxVolume";
     const string MusicParam = "MusicVolume";
 
-    public const string MASTER_KEY = "Vol_Master";
-    public const string SFX_KEY = "Vol_Sfx";
-    public const string MUSIC_KEY = "Vol_Music";
-
     void Awake()
     {
+        // PATRON SINGLETON
         if (Instance && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
@@ -36,6 +34,27 @@ public class SettingsManager : MonoBehaviour
         SetMaster(PlayerPrefs.GetFloat(MasterKey, 1f), save: false);
         SetSfx(PlayerPrefs.GetFloat(SfxKey, 1f), save: false);
         SetMusic(PlayerPrefs.GetFloat(MusicKey, 1f), save: false);
+    }
+
+    // PATRON MEMENTO
+    public SettingsMemento CreateMemento()
+    {
+        return new SettingsMemento(
+            PlayerPrefs.GetFloat(MasterKey, 1f),
+            PlayerPrefs.GetFloat(SfxKey, 1f),
+            PlayerPrefs.GetFloat(MusicKey, 1f),
+            PlayerPrefs.GetInt(FullscreenKey, 1) == 1);
+    }
+
+    // PATRON MEMENTO
+    public void Restore(SettingsMemento memento)
+    {
+        if (memento == null) return;
+
+        SetMaster(memento.Master);
+        SetSfx(memento.Sfx);
+        SetMusic(memento.Music);
+        SetFullscreen(memento.Fullscreen);
     }
 
     public void SetMaster(float v01, bool save = true)
@@ -54,6 +73,13 @@ public class SettingsManager : MonoBehaviour
     {
         ApplyMixer01(MusicParam, v01);
         if (save) PlayerPrefs.SetFloat(MusicKey, Mathf.Clamp01(v01));
+    }
+
+    public static void SetFullscreen(bool full)
+    {
+        Screen.fullScreenMode = full ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+        PlayerPrefs.SetInt(FullscreenKey, full ? 1 : 0);
+        PlayerPrefs.Save();
     }
 
     void ApplyMixer01(string param, float v01)
